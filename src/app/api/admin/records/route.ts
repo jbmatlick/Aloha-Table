@@ -1,20 +1,36 @@
 import { NextResponse } from 'next/server';
 import Airtable from 'airtable';
 
-// Initialize Airtable
-const airtable = new Airtable({
-  apiKey: process.env.AIRTABLE_API_KEY
-});
-
-const base = airtable.base(process.env.AIRTABLE_BASE_ID!);
-const tableName = process.env.AIRTABLE_TABLE_NAME || 'Contact Submissions';
-
 export async function GET(request: Request) {
   try {
     // Log environment variables (without sensitive data)
-    console.log('Airtable Base ID:', process.env.AIRTABLE_BASE_ID ? 'Set' : 'Not Set');
-    console.log('Airtable Table Name:', process.env.AIRTABLE_TABLE_NAME || 'Using default');
-    console.log('Airtable API Key:', process.env.AIRTABLE_API_KEY ? 'Set' : 'Not Set');
+    console.log('Environment check:', {
+      hasApiKey: !!process.env.AIRTABLE_API_KEY,
+      hasBaseId: !!process.env.AIRTABLE_BASE_ID,
+      tableName: process.env.AIRTABLE_TABLE_NAME || 'Contact Submissions'
+    });
+
+    if (!process.env.AIRTABLE_API_KEY) {
+      throw new Error('AIRTABLE_API_KEY is not set');
+    }
+    if (!process.env.AIRTABLE_BASE_ID) {
+      throw new Error('AIRTABLE_BASE_ID is not set');
+    }
+
+    // Initialize Airtable with error handling
+    let airtable;
+    try {
+      airtable = new Airtable({
+        apiKey: process.env.AIRTABLE_API_KEY
+      });
+      console.log('Airtable initialized successfully');
+    } catch (initError) {
+      console.error('Failed to initialize Airtable:', initError);
+      throw new Error(`Airtable initialization failed: ${initError instanceof Error ? initError.message : 'Unknown error'}`);
+    }
+
+    const base = airtable.base(process.env.AIRTABLE_BASE_ID);
+    const tableName = process.env.AIRTABLE_TABLE_NAME || 'Contact Submissions';
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -22,6 +38,7 @@ export async function GET(request: Request) {
     const offset = (page - 1) * pageSize;
 
     // Get total count from Airtable
+    console.log('Fetching all records for count...');
     const allRecords = await base(tableName)
       .select()
       .all();
@@ -30,6 +47,7 @@ export async function GET(request: Request) {
     console.log('Total records found:', total);
 
     // Then fetch the paginated records
+    console.log('Fetching paginated records...');
     const records = await base(tableName)
       .select({
         maxRecords: pageSize,
@@ -64,7 +82,8 @@ export async function GET(request: Request) {
     console.error('Error details:', {
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : 'Unknown error type'
+      name: error instanceof Error ? error.name : 'Unknown error type',
+      error: error // Log the full error object
     });
     
     return NextResponse.json(
