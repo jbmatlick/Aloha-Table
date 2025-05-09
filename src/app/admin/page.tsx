@@ -24,35 +24,38 @@ export default function Admin() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check authentication
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    // Fetch records from Airtable
-    const fetchRecords = async () => {
-      try {
-        const response = await fetch(`/api/admin/records?page=${currentPage}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (!response.ok) {
-          throw new Error('Failed to fetch records');
-        }
-        const data = await response.json();
-        setRecords(data.records);
-        setTotalPages(Math.ceil(data.total / 50));
-      } catch (error) {
-        console.error('Error fetching records:', error);
-      } finally {
-        setIsLoading(false);
+    // Check if we're in the browser
+    if (typeof window !== 'undefined') {
+      // Check authentication
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        router.push('/login');
+        return;
       }
-    };
 
-    fetchRecords();
+      // Fetch records from Airtable
+      const fetchRecords = async () => {
+        try {
+          const response = await fetch(`/api/admin/records?page=${currentPage}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          if (!response.ok) {
+            throw new Error('Failed to fetch records');
+          }
+          const data = await response.json();
+          setRecords(data.records);
+          setTotalPages(Math.ceil(data.total / 50));
+        } catch (error) {
+          console.error('Error fetching records:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchRecords();
+    }
   }, [router, currentPage]);
 
   const handleLogout = () => {
