@@ -14,6 +14,7 @@ export async function GET(request: Request) {
     // Log environment variables (without sensitive data)
     console.log('Airtable Base ID:', process.env.AIRTABLE_BASE_ID ? 'Set' : 'Not Set');
     console.log('Airtable Table Name:', process.env.AIRTABLE_TABLE_NAME || 'Using default');
+    console.log('Airtable API Key:', process.env.AIRTABLE_API_KEY ? 'Set' : 'Not Set');
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -59,10 +60,19 @@ export async function GET(request: Request) {
       totalPages: Math.ceil(total / pageSize)
     });
   } catch (error) {
-    // Log the full error
-    console.error('Detailed error:', error);
+    // Enhanced error logging
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : 'Unknown error type'
+    });
+    
     return NextResponse.json(
-      { error: 'Failed to fetch records', details: error instanceof Error ? error.message : 'Unknown error' },
+      { 
+        error: 'Failed to fetch records', 
+        details: error instanceof Error ? error.message : 'Unknown error',
+        type: error instanceof Error ? error.name : 'Unknown error type'
+      },
       { status: 500 }
     );
   }
