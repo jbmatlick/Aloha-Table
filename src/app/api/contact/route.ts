@@ -14,17 +14,21 @@ export async function POST(request: Request) {
     const { fullName, email, phone, adults, children, preferredDate, details, preferredContact } = await request.json();
 
     // Create a record in Airtable
-    const record = await base(tableName).create({
-      'Full Name': fullName || '',
-      'Email': email || '',
-      'Phone': phone || '',
-      'Number of Adults': adults ? Number(adults) : null,
-      'Number of Children': children ? Number(children) : null,
-      'Preferred Date': preferredDate || '',
-      'Contact Method': preferredContact === 'Text Me' ? 'Text Me' : preferredContact === 'Call Me' ? 'Call Me' : 'Email Me',
-      'Additional Details': details || '',
-      'Status': 'New'
-    });
+    const record = await base(tableName).create([
+      {
+        fields: {
+          'Full Name': fullName || '',
+          'Email': email || '',
+          'Phone': phone || '',
+          'Number of Adults': adults ? Number(adults) : undefined,
+          'Number of Children': children ? Number(children) : undefined,
+          'Preferred Date': preferredDate || '',
+          'Contact Method': preferredContact === 'Text Me' ? 'Text Me' : preferredContact === 'Call Me' ? 'Call Me' : 'Email Me',
+          'Additional Details': details || '',
+          'Status': 'New'
+        }
+      }
+    ]);
 
     return NextResponse.json({ success: true, record });
   } catch (error) {
