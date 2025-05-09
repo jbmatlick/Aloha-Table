@@ -20,7 +20,8 @@ function ContactForm() {
     preferredDate: '',
     details: '',
     preferredContact: '',
-    referrerId: ''
+    referrerId: '',
+    referrerName: ''
   });
 
   const [status, setStatus] = useState<{
@@ -32,9 +33,13 @@ function ContactForm() {
 
   useEffect(() => {
     const ref = searchParams.get('ref');
+    const name = searchParams.get('name');
     if (ref) {
       console.log('Referral ID found:', ref);
       setFormData(prev => ({ ...prev, referrerId: ref }));
+    }
+    if (name) {
+      setFormData(prev => ({ ...prev, referrerName: name }));
     }
   }, [searchParams]);
 
@@ -76,7 +81,8 @@ function ContactForm() {
           preferredDate: '',
           details: '',
           preferredContact: '',
-          referrerId: ''
+          referrerId: '',
+          referrerName: ''
         });
       } else {
         throw new Error(data.error || 'Something went wrong');
@@ -163,6 +169,16 @@ function ContactForm() {
             </motion.div>
           )}
 
+          {formData.referrerName && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8 p-6 rounded-lg bg-emerald-50 text-emerald-800 shadow-md"
+            >
+              👋 Referred by {formData.referrerName} — we love building community around memorable events. Let's plan something great!
+            </motion.div>
+          )}
+
           {/* Hidden referrer ID field */}
           {formData.referrerId && (
             <input
@@ -225,38 +241,44 @@ function ContactForm() {
               />
             </div>
 
-            {/* Number of Adults */}
-            <div>
-              <label htmlFor="adults" className="block text-sm font-medium text-gray-700 mb-1">
-                How many adults?
-              </label>
-              <input
-                type="number"
-                name="adults"
-                id="adults"
-                min="1"
-                value={formData.adults}
-                onChange={handleChange}
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
-                inputMode="numeric"
-              />
-            </div>
+            {/* Group Section */}
+            <div className="md:col-span-2">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Tell us about your group (optional)</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Number of Adults */}
+                <div>
+                  <label htmlFor="adults" className="block text-sm font-medium text-gray-700 mb-1">
+                    How many adults?
+                  </label>
+                  <input
+                    type="number"
+                    name="adults"
+                    id="adults"
+                    min="1"
+                    value={formData.adults}
+                    onChange={handleChange}
+                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
+                    inputMode="numeric"
+                  />
+                </div>
 
-            {/* Number of Children */}
-            <div>
-              <label htmlFor="children" className="block text-sm font-medium text-gray-700 mb-1">
-                How many children under 12?
-              </label>
-              <input
-                type="number"
-                name="children"
-                id="children"
-                min="0"
-                value={formData.children}
-                onChange={handleChange}
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
-                inputMode="numeric"
-              />
+                {/* Number of Children */}
+                <div>
+                  <label htmlFor="children" className="block text-sm font-medium text-gray-700 mb-1">
+                    How many children under 12?
+                  </label>
+                  <input
+                    type="number"
+                    name="children"
+                    id="children"
+                    min="0"
+                    value={formData.children}
+                    onChange={handleChange}
+                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
+                    inputMode="numeric"
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Preferred Date */}
@@ -264,16 +286,15 @@ function ContactForm() {
               <label htmlFor="preferredDate" className="block text-sm font-medium text-gray-700 mb-1">
                 Preferred Date(s) <span className="text-red-500">*</span>
               </label>
-              <input
-                type="text"
+              <textarea
                 name="preferredDate"
                 id="preferredDate"
                 required
-                placeholder="e.g., June 15-20, 2024"
+                placeholder="e.g., June 15–20, or any weekend in July"
                 value={formData.preferredDate}
                 onChange={handleChange}
                 className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
-                autoComplete="off"
+                rows={2}
               />
             </div>
 
@@ -325,7 +346,7 @@ function ContactForm() {
             {/* Additional Details */}
             <div className="md:col-span-2">
               <label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-1">
-                Additional Details / Questions <span className="text-red-500">*</span>
+                Tell us more about your event <span className="text-red-500">*</span>
               </label>
               <textarea
                 name="details"
@@ -335,7 +356,7 @@ function ContactForm() {
                 value={formData.details}
                 onChange={handleChange}
                 className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
-                placeholder="Tell us about your event or any special requests..."
+                placeholder="Any themes, allergies, or special requests?"
                 autoComplete="off"
               />
             </div>
