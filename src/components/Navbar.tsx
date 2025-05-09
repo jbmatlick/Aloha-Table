@@ -86,6 +86,13 @@ const Navbar = () => {
               </Link>
             ))}
             <Link
+              href="/login"
+              className="block px-3 py-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-md"
+              onClick={() => setIsOpen(false)}
+            >
+              Login
+            </Link>
+            <Link
               href="/contact"
               className="block px-3 py-2 bg-island-green text-white rounded-md hover:bg-emerald-700"
               onClick={() => setIsOpen(false)}
