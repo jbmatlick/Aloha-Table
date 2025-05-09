@@ -19,10 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-        <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
-        <meta name="theme-color" content="#2E7D32" />
+        <link rel="icon" href="/favicon.ico" />
       </head>
       <body className={`${inter.variable} ${playfair.variable} font-sans`}>
         {children}
