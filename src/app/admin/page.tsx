@@ -19,6 +19,8 @@ interface ContactRecord {
 export default function Admin() {
   const [records, setRecords] = useState<ContactRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
 
   useEffect(() => {
@@ -32,12 +34,13 @@ export default function Admin() {
     // Fetch records from Airtable
     const fetchRecords = async () => {
       try {
-        const response = await fetch('/api/admin/records');
+        const response = await fetch(`/api/admin/records?page=${currentPage}`);
         if (!response.ok) {
           throw new Error('Failed to fetch records');
         }
         const data = await response.json();
         setRecords(data.records);
+        setTotalPages(Math.ceil(data.total / 50));
       } catch (error) {
         console.error('Error fetching records:', error);
       } finally {
@@ -46,11 +49,16 @@ export default function Admin() {
     };
 
     fetchRecords();
-  }, [router]);
+  }, [router, currentPage]);
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     router.push('/login');
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    setIsLoading(true);
   };
 
   if (isLoading) {
@@ -100,19 +108,19 @@ export default function Admin() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Email
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Preferred Dates
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Contact Method
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Submitted At
                     </th>
                   </tr>
@@ -120,19 +128,19 @@ export default function Admin() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {records.map((record) => (
                     <tr key={record.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
                         {record.fields['Full Name']}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
                         {record.fields['Email']}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
                         {record.fields['Preferred Date']}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
                         {record.fields['Contact Method']}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
                         {new Date(record.fields['Created At']).toLocaleDateString()}
                       </td>
                     </tr>
@@ -141,6 +149,35 @@ export default function Admin() {
               </table>
             </div>
           </motion.div>
+
+          {/* Pagination */}
+          <div className="mt-6 flex justify-center space-x-2">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-4 py-2 rounded-md ${
+                currentPage === 1
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2 text-gray-700">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2 rounded-md ${
+                currentPage === totalPages
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </main>
     </>
