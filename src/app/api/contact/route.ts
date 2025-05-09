@@ -3,7 +3,7 @@ import Airtable from 'airtable';
 
 export async function POST(request: Request) {
   try {
-    const { name, email, phone, preferredDate, contactMethod, message, referrerId } = await request.json();
+    const { name, email, phone, preferredDate, contactMethod, message, referrerId, referrerName, adults, children } = await request.json();
 
     if (!name || !email) {
       return NextResponse.json(
@@ -24,12 +24,10 @@ export async function POST(request: Request) {
     const table = base('Leads');
 
     // If there's a referrer, get their details
-    let referrerName = '';
     let referrerEmail = '';
     if (referrerId) {
       const referrerTable = base('Referrers');
       const referrer = await referrerTable.find(referrerId);
-      referrerName = referrer.get('Full Name') as string;
       referrerEmail = referrer.get('Email') as string;
     }
 
@@ -41,7 +39,10 @@ export async function POST(request: Request) {
       'Contact Method': contactMethod,
       'Additional Details': message || '',
       'Referrer': referrerId ? [referrerId] : [],
-      'Environment': process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      'Environment': process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+      'Number of Adults': parseInt(adults) || 0,
+      'Number of Children': parseInt(children) || 0,
+      'Status': 'New'
     });
 
     // Use production URL
@@ -55,9 +56,10 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         to: email,
-        template: 'contact_referral',
+        template: referrerId ? 'contact_referral' : 'contact_no_referral',
         data: {
-          name
+          name,
+          referrerName
         }
       }),
     });

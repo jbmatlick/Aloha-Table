@@ -88,8 +88,9 @@ export async function POST(request: Request) {
                         <td style="color: #333333; font-size: 16px; line-height: 1.6;">
                           <p style="margin: 0 0 20px;">Hi ${templateData.name},</p>
                           <p style="margin: 0 0 20px;">Thanks so much for reaching out! I received your request and will be following up soon to help plan something special for you here on Kauai.</p>
-                          <p style="margin: 0 0 30px;">It looks like someone from our community referred you — I love that! We're all about creating meaningful connections through great food and memorable experiences.</p>
-                          <p style="margin: 0; color: #2F4F4F; font-style: italic;">More soon,<br>Iris<br>Salt & Serenity</p>
+                          <p style="margin: 0 0 20px;">I see that ${templateData.referrerName} shared Salt & Serenity with you — that's wonderful! We love building community through great food and memorable experiences, and I'm excited to help create something special for you.</p>
+                          <p style="margin: 0 0 30px;">I'll be in touch soon to discuss your event and answer any questions you might have.</p>
+                          <p style="margin: 0; color: #2F4F4F; font-style: italic;">Warmly,<br>Iris<br>Salt & Serenity</p>
                         </td>
                       </tr>
                     </table>

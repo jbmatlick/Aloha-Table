@@ -61,7 +61,10 @@ function ContactForm() {
           preferredDate: formData.preferredDate,
           contactMethod: formData.preferredContact,
           message: formData.details,
-          referrerId: formData.referrerId
+          referrerId: formData.referrerId,
+          referrerName: formData.referrerName,
+          adults: formData.adults,
+          children: formData.children
         }),
       });
 
