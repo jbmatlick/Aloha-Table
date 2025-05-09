@@ -1,104 +1,110 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
-import Link from 'next/link';
 
-export default function About() {
+export default function AboutPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen pt-20">
+      <main className="min-h-screen bg-white">
         {/* Hero Section */}
-        <div className="bg-gray-50 py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative h-[60vh] min-h-[400px] w-full">
+          <Image
+            src="/images/chefs-together.jpg"
+            alt="Angie and Iris Oliveras"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-40" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-serif text-center mb-4"
+            >
+              Meet the Chefs Behind Salt & Serenity
+            </motion.h1>
+          </div>
+        </div>
+
+        {/* Chef Profiles Section */}
+        <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+            {/* Angie's Profile */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-center mb-16"
+              className="flex flex-col lg:flex-row items-center lg:items-start gap-8"
             >
-              <h1 className="text-4xl md:text-5xl font-serif text-gray-900 mb-4">About Me</h1>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Passionate about creating unforgettable culinary experiences on the beautiful island of Kauai
-              </p>
+              <div className="relative w-64 h-80 lg:w-80 lg:h-96 rounded-lg overflow-hidden">
+                <Image
+                  src="/images/angie.jpg"
+                  alt="Angie Oliveras"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex-1 text-center lg:text-left">
+                <h2 className="text-3xl font-serif text-gray-900 mb-2">Angie Oliveras</h2>
+                <p className="text-xl text-island-green font-medium mb-6">The Salt</p>
+                <p className="text-gray-600 leading-relaxed">
+                  I cook the way Kauai feels at sunset — warm, bold, and a little wild. My flavors are loud, honest, and rooted in the local land. After years spent working in busy kitchens from LA to Oahu, I came home to bring fire back to the plate — grilled pineapple, seared ahi, citrus marinades kissed by sea breeze. I love cooking barefoot, where the sound of the surf meets the sizzle of a hot pan. Salt isn't just a seasoning — it's an attitude.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Iris's Profile */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="flex flex-col lg:flex-row-reverse items-center lg:items-start gap-8"
+            >
+              <div className="relative w-64 h-80 lg:w-80 lg:h-96 rounded-lg overflow-hidden">
+                <Image
+                  src="/images/iris.jpg"
+                  alt="Iris Oliveras"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex-1 text-center lg:text-left">
+                <h2 className="text-3xl font-serif text-gray-900 mb-2">Iris Oliveras</h2>
+                <p className="text-xl text-island-green font-medium mb-6">The Serenity</p>
+                <p className="text-gray-600 leading-relaxed">
+                  For me, cooking is meditation. It's the rustle of ti leaves, the calm of ocean air moving through open windows, and the soft perfume of poached mango in the afternoon light. I focus on nourishment that's elegant and unfussy — subtle, seasonal, and grounded in aloha. I've studied traditional Hawaiian ingredients and modern plant-forward cuisine to bring peaceful balance to every meal. I'm the yin to Angie's yang — the breeze after the heat.
+                </p>
+              </div>
             </motion.div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col lg:flex-row items-center gap-12">
-              {/* Image */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="flex-1 w-full"
-              >
-                <div className="relative w-full h-[600px] rounded-lg overflow-hidden shadow-xl">
-                  <Image
-                    src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=2070&q=80"
-                    alt="Professional chef preparing food in a modern kitchen"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    priority
-                  />
-                </div>
-              </motion.div>
-
-              {/* Text Content */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="flex-1"
-              >
-                <div className="prose prose-lg">
-                  <p className="text-gray-600 mb-6">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  </p>
-                  <p className="text-gray-600 mb-6">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                  </p>
-                  <p className="text-gray-600 mb-8">
-                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-                  </p>
-                  <Link
-                    href="/contact"
-                    className="inline-block bg-island-green text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-emerald-700 transition-colors"
-                  >
-                    Book Your Experience
-                  </Link>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="bg-island-green py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl md:text-4xl font-serif text-white mb-6">
-              Let's Create Something Special Together
-            </h2>
-            <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
-              I'd love to hear about your vision for your next culinary experience
+        {/* Lifestyle Section */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="relative h-[70vh] w-full"
+        >
+          <Image
+            src="/images/kitchen-beach.jpg"
+            alt="Cooking on the beach"
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-30" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-white text-xl md:text-2xl font-serif text-center px-4">
+              A shared love of food, home, and the island
             </p>
-            <a
-              href="/contact"
-              className="inline-block bg-white text-island-green px-8 py-3 rounded-md text-lg font-medium hover:bg-gray-100 transition-colors"
-            >
-              Get in Touch
-            </a>
           </div>
-        </section>
+        </motion.div>
       </main>
     </>
   );
