@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     console.log('Environment check:', {
       hasApiKey: !!process.env.AIRTABLE_API_KEY,
       hasBaseId: !!process.env.AIRTABLE_BASE_ID,
-      tableName: process.env.AIRTABLE_TABLE_NAME || 'Contact Submissions'
+      tableName: process.env.AIRTABLE_TABLE_NAME || 'Leads'
     });
 
     if (!process.env.AIRTABLE_API_KEY) {
@@ -30,7 +30,7 @@ export async function GET(request: Request) {
     }
 
     const base = airtable.base(process.env.AIRTABLE_BASE_ID);
-    const tableName = process.env.AIRTABLE_TABLE_NAME || 'Contact Submissions';
+    const tableName = process.env.AIRTABLE_TABLE_NAME || 'Leads';
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');

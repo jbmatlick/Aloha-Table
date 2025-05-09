@@ -7,7 +7,7 @@ const airtable = new Airtable({
 });
 
 const base = airtable.base(process.env.AIRTABLE_BASE_ID!);
-const tableName = process.env.AIRTABLE_TABLE_NAME || 'Contact Submissions';
+const tableName = process.env.AIRTABLE_TABLE_NAME || 'Leads';
 
 export async function POST(request: Request) {
   try {
