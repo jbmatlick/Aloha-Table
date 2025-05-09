@@ -21,7 +21,7 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="text-2xl font-serif text-island-green">
-              Island Table
+              Salt and Serenity
             </Link>
           </div>
           

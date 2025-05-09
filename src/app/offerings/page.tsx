@@ -150,7 +150,7 @@ export default function Offerings() {
         <section className="bg-island-green py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl md:text-4xl font-serif text-white mb-6">
-              Ready to Experience Island Table?
+              Ready to Experience Salt and Serenity?
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
               Let's create an unforgettable culinary experience tailored to your preferences
