@@ -20,50 +20,171 @@ export async function POST(request: Request) {
       referrer_signup: {
         subject: "You're in! Let's get cooking 🌺",
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-            <p>Hi ${templateData.name},</p>
-            <p>Thanks for signing up! You can now share your personal referral link and invite others to experience Salt & Serenity.</p>
-            <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-              <p style="margin: 0;">Here's your link:</p>
-              <p style="margin: 10px 0 0 0;">👉 <a href="${templateData.referralLink}" style="color: #2F4F4F; word-break: break-all;">${templateData.referralLink}</a></p>
-            </div>
-            <p>When someone signs up using your link, I'll send you a thank-you message. For now, mahalo for spreading the word!</p>
-            <p>Warmly,<br>Iris<br>Salt & Serenity</p>
-          </div>
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Welcome to the Referral Program</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f5f0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+                <tr>
+                  <td style="padding: 40px 30px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="text-align: center; padding-bottom: 30px;">
+                          <h1 style="color: #2F4F4F; font-size: 28px; margin: 0; font-family: Georgia, serif;">You're in! Let's get cooking 🌺</h1>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="color: #333333; font-size: 16px; line-height: 1.6;">
+                          <p style="margin: 0 0 20px;">Hi ${templateData.name},</p>
+                          <p style="margin: 0 0 20px;">Thanks for signing up! You can now share your personal referral link and invite others to experience Salt & Serenity.</p>
+                          <div style="background-color: #f8f5f0; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <p style="margin: 0 0 10px; font-weight: bold;">Here's your link:</p>
+                            <p style="margin: 0;">
+                              <a href="${templateData.referralLink}" style="color: #2F4F4F; word-break: break-all; text-decoration: none; border-bottom: 1px solid #2F4F4F;">${templateData.referralLink}</a>
+                            </p>
+                          </div>
+                          <p style="margin: 0 0 30px;">When someone signs up using your link, I'll send you a thank-you message. For now, mahalo for spreading the word!</p>
+                          <p style="margin: 0; color: #2F4F4F; font-style: italic;">Warmly,<br>Iris<br>Salt & Serenity</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f8f5f0; padding: 20px 30px; text-align: center; font-size: 12px; color: #666666;">
+                    <p style="margin: 0;">© ${new Date().getFullYear()} Salt and Serenity. All rights reserved.</p>
+                  </td>
+                </tr>
+              </table>
+            </body>
+          </html>
         `
       },
       contact_referral: {
         subject: "Welcome to Salt & Serenity 🌴",
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-            <p>Hi ${templateData.name},</p>
-            <p>Thanks for your interest! I received your request and will follow up soon to plan something special for you here on Kauai.</p>
-            <p>By the way, it looks like you heard about us from someone in our community — we love that!</p>
-            <p>More soon,<br>Iris<br>Salt & Serenity</p>
-          </div>
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Welcome to Salt & Serenity</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f5f0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+                <tr>
+                  <td style="padding: 40px 30px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="text-align: center; padding-bottom: 30px;">
+                          <h1 style="color: #2F4F4F; font-size: 28px; margin: 0; font-family: Georgia, serif;">Welcome to Salt & Serenity 🌴</h1>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="color: #333333; font-size: 16px; line-height: 1.6;">
+                          <p style="margin: 0 0 20px;">Hi ${templateData.name},</p>
+                          <p style="margin: 0 0 20px;">Thanks so much for reaching out! I received your request and will be following up soon to help plan something special for you here on Kauai.</p>
+                          <p style="margin: 0 0 30px;">It looks like someone from our community referred you — I love that! We're all about creating meaningful connections through great food and memorable experiences.</p>
+                          <p style="margin: 0; color: #2F4F4F; font-style: italic;">More soon,<br>Iris<br>Salt & Serenity</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f8f5f0; padding: 20px 30px; text-align: center; font-size: 12px; color: #666666;">
+                    <p style="margin: 0;">© ${new Date().getFullYear()} Salt and Serenity. All rights reserved.</p>
+                  </td>
+                </tr>
+              </table>
+            </body>
+          </html>
         `
       },
       contact_no_referral: {
-        subject: "Thanks for reaching out 🌺",
+        subject: "Welcome to Salt and Serenity!",
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-            <p>Hi ${templateData.name},</p>
-            <p>I received your request and I'm excited to hear more about what you're looking for!</p>
-            <p>Whether it's a cocktail gathering, a private dinner, or fresh meals for the week — Salt & Serenity is about bringing beautiful food to relaxed, joyful settings.</p>
-            <p>I'll follow up soon with more details and availability.</p>
-            <p>Mahalo,<br>Iris<br>Salt & Serenity</p>
-          </div>
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Welcome to Salt and Serenity</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f5f0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+                <tr>
+                  <td style="padding: 40px 30px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="text-align: center; padding-bottom: 30px;">
+                          <h1 style="color: #2F4F4F; font-size: 28px; margin: 0; font-family: Georgia, serif;">Welcome to Salt and Serenity</h1>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="color: #333333; font-size: 16px; line-height: 1.6;">
+                          <p style="margin: 0 0 20px;">Hi ${templateData.name},</p>
+                          <p style="margin: 0 0 20px;">Thanks for reaching out — we're so glad you found us!</p>
+                          <p style="margin: 0 0 30px;">Salt and Serenity is all about creating unforgettable meals and meaningful moments. Whether you're hosting an intimate dinner or planning something bigger, we'll be in touch soon to start planning something special.</p>
+                          <p style="margin: 0; color: #2F4F4F; font-style: italic;">Warmly,<br>Iris<br>Salt & Serenity</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f8f5f0; padding: 20px 30px; text-align: center; font-size: 12px; color: #666666;">
+                    <p style="margin: 0;">© ${new Date().getFullYear()} Salt and Serenity. All rights reserved.</p>
+                  </td>
+                </tr>
+              </table>
+            </body>
+          </html>
         `
       },
       referrer_notification: {
         subject: "🌟 Someone joined thanks to you!",
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-            <p>Hi ${templateData.referrerName},</p>
-            <p>Just a heads up — ${templateData.contactName} just submitted a request through your referral link! 🤍</p>
-            <p>Thanks again for sharing Salt & Serenity with your friends. You're helping us grow our island table, one guest at a time.</p>
-            <p>Gratefully,<br>Iris<br>Salt & Serenity</p>
-          </div>
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>New Referral!</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f5f0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+                <tr>
+                  <td style="padding: 40px 30px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="text-align: center; padding-bottom: 30px;">
+                          <h1 style="color: #2F4F4F; font-size: 28px; margin: 0; font-family: Georgia, serif;">🌟 Someone joined thanks to you!</h1>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="color: #333333; font-size: 16px; line-height: 1.6;">
+                          <p style="margin: 0 0 20px;">Hi ${templateData.referrerName},</p>
+                          <p style="margin: 0 0 20px;">Just a heads up — ${templateData.contactName} just submitted a request through your referral link! 🤍</p>
+                          <p style="margin: 0 0 30px;">Thanks again for sharing Salt & Serenity with your friends. You're helping us grow our island table, one guest at a time.</p>
+                          <p style="margin: 0; color: #2F4F4F; font-style: italic;">Gratefully,<br>Iris<br>Salt & Serenity</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="background-color: #f8f5f0; padding: 20px 30px; text-align: center; font-size: 12px; color: #666666;">
+                    <p style="margin: 0;">© ${new Date().getFullYear()} Salt and Serenity. All rights reserved.</p>
+                  </td>
+                </tr>
+              </table>
+            </body>
+          </html>
         `
       }
     };
