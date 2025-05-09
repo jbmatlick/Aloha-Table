@@ -170,9 +170,9 @@ export async function POST(request: Request) {
                       <tr>
                         <td style="color: #333333; font-size: 16px; line-height: 1.6;">
                           <p style="margin: 0 0 20px;">Hi ${templateData.referrerName},</p>
-                          <p style="margin: 0 0 20px;">Exciting news — ${templateData.contactName} just reached out through your referral link! 🤍</p>
+                          <p style="margin: 0 0 20px;">Exciting news — ${templateData.contactName} just reached out through your referral link!</p>
                           <p style="margin: 0 0 20px;">Thanks again for spreading the word. Every person you refer helps build a stronger Salt & Serenity community — and we'll make sure to show our appreciation.</p>
-                          <p style="margin: 0 0 20px;">As a reminder, for each confirmed booking from your referrals, you'll earn exclusive perks or payment (details coming soon). It's our way of saying mahalo for helping us grow our island table.</p>
+                          <p style="margin: 0 0 20px;">As a reminder, for each confirmed booking from your referrals, you'll earn $50. It's our way of saying mahalo for helping us grow our island table.</p>
                           <div style="background-color: #f8f5f0; padding: 20px; border-radius: 8px; margin: 20px 0;">
                             <p style="margin: 0 0 10px; font-weight: bold;">Keep sharing your link and helping create memorable meals on Kauai:</p>
                             <p style="margin: 0 0 10px; font-weight: bold;">🔗 Your link:</p>

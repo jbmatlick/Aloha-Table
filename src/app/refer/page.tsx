@@ -64,7 +64,7 @@ export default function ReferPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-4xl md:text-6xl font-serif mb-6"
               >
-                Earn $50 for Every Event You Refer
+                Earn $50 for Every Booked Event You Refer
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}

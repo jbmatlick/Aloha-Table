@@ -77,7 +77,7 @@ export async function POST(request: Request) {
                           <p style="margin: 0 0 20px;">Hi ${name},</p>
                           <p style="margin: 0 0 20px;">Thanks for joining our referral program — we're so glad to have you on board!</p>
                           <p style="margin: 0 0 20px;">Salt & Serenity is all about creating unforgettable island experiences around food and community. By sharing your personal link, you're helping bring more amazing people to the table — and you'll be rewarded for it.</p>
-                          <p style="margin: 0 0 20px;">Whenever someone uses your link to book an experience, you'll earn credit (or cash) as a thank you. Simple as that.</p>
+                          <p style="margin: 0 0 20px;">Whenever someone books an event through your link, you'll earn $50 as a thank you. Simple as that.</p>
                           <div style="background-color: #f8f5f0; padding: 20px; border-radius: 8px; margin: 20px 0;">
                             <p style="margin: 0 0 10px; font-weight: bold;">Here's your personal link to share:</p>
                             <p style="margin: 0;">
