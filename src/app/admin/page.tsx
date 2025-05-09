@@ -34,7 +34,11 @@ export default function Admin() {
     // Fetch records from Airtable
     const fetchRecords = async () => {
       try {
-        const response = await fetch(`/api/admin/records?page=${currentPage}`);
+        const response = await fetch(`/api/admin/records?page=${currentPage}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         if (!response.ok) {
           throw new Error('Failed to fetch records');
         }

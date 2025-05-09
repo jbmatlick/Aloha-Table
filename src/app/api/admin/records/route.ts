@@ -3,6 +3,23 @@ import Airtable from 'airtable';
 
 export async function GET(request: Request) {
   try {
+    // Check authentication
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (token !== 'dummy-token') {
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
+      );
+    }
+
     // Log environment variables (without sensitive data)
     console.log('Environment check:', {
       hasApiKey: !!process.env.AIRTABLE_API_KEY,
