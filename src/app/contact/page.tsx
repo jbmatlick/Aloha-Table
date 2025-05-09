@@ -7,6 +7,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default function Contact() {
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
