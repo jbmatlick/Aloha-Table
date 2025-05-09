@@ -37,6 +37,18 @@ function ContactForm() {
     if (ref) {
       console.log('Referral ID found:', ref);
       setFormData(prev => ({ ...prev, referrerId: ref }));
+      
+      // Fetch referrer name from Airtable if we only have the ID
+      if (!name) {
+        fetch('/api/referrers/' + ref)
+          .then(response => response.json())
+          .then(data => {
+            if (data.name) {
+              setFormData(prev => ({ ...prev, referrerName: data.name }));
+            }
+          })
+          .catch(error => console.error('Error fetching referrer:', error));
+      }
     }
     if (name) {
       setFormData(prev => ({ ...prev, referrerName: name }));
@@ -172,13 +184,13 @@ function ContactForm() {
             </motion.div>
           )}
 
-          {formData.referrerName && (
+          {(formData.referrerId || formData.referrerName) && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-8 p-6 rounded-lg bg-emerald-50 text-emerald-800 shadow-md"
             >
-              👋 Referred by {formData.referrerName} — we love building community around memorable events. Let's plan something great!
+              👋 Referred by {formData.referrerName || 'a friend'} — we love building community around memorable events. Let's plan something great!
             </motion.div>
           )}
 

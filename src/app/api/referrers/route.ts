@@ -75,14 +75,16 @@ export async function POST(request: Request) {
                       <tr>
                         <td style="color: #333333; font-size: 16px; line-height: 1.6;">
                           <p style="margin: 0 0 20px;">Hi ${name},</p>
-                          <p style="margin: 0 0 20px;">Thanks for signing up! You can now share your personal referral link and invite others to experience Salt & Serenity.</p>
+                          <p style="margin: 0 0 20px;">Thanks for joining our referral program — we're so glad to have you on board!</p>
+                          <p style="margin: 0 0 20px;">Salt & Serenity is all about creating unforgettable island experiences around food and community. By sharing your personal link, you're helping bring more amazing people to the table — and you'll be rewarded for it.</p>
+                          <p style="margin: 0 0 20px;">Whenever someone uses your link to book an experience, you'll earn credit (or cash) as a thank you. Simple as that.</p>
                           <div style="background-color: #f8f5f0; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                            <p style="margin: 0 0 10px; font-weight: bold;">Here's your link:</p>
+                            <p style="margin: 0 0 10px; font-weight: bold;">Here's your personal link to share:</p>
                             <p style="margin: 0;">
-                              <a href="${referralUrl}" style="color: #2F4F4F; word-break: break-all; text-decoration: none; border-bottom: 1px solid #2F4F4F;">${referralUrl}</a>
+                              🔗 <a href="${referralUrl}" style="color: #2F4F4F; word-break: break-all; text-decoration: none; border-bottom: 1px solid #2F4F4F;">${referralUrl}</a>
                             </p>
                           </div>
-                          <p style="margin: 0 0 30px;">When someone signs up using your link, I'll send you a thank-you message. For now, mahalo for spreading the word!</p>
+                          <p style="margin: 0 0 30px;">We'll notify you each time someone signs up through it. Thanks again for helping us grow our ohana.</p>
                           <p style="margin: 0; color: #2F4F4F; font-style: italic;">Warmly,<br>Iris<br>Salt & Serenity</p>
                         </td>
                       </tr>
