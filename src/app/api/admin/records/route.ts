@@ -37,10 +37,22 @@ export async function GET(request: Request) {
       })
       .all();
 
-    console.log('Records fetched:', records.length);
+    // Transform the records to match the expected format
+    const formattedRecords = records.map(record => ({
+      id: record.id,
+      fields: {
+        'Full Name': record.get('Full Name') || '',
+        'Email': record.get('Email') || '',
+        'Preferred Date': record.get('Preferred Date') || '',
+        'Contact Method': record.get('Contact Method') || '',
+        'Created At': record.get('Created At') || new Date().toISOString()
+      }
+    }));
+
+    console.log('Records fetched:', formattedRecords.length);
 
     return NextResponse.json({ 
-      records,
+      records: formattedRecords,
       total,
       page,
       pageSize,
