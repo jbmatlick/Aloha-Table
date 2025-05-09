@@ -24,8 +24,8 @@ export async function GET(request: Request) {
     console.log('Environment check:', {
       hasApiKey: !!process.env.AIRTABLE_API_KEY,
       hasBaseId: !!process.env.AIRTABLE_BASE_ID,
-      tableName: process.env.AIRTABLE_TABLE_NAME || 'Leads',
-      baseId: process.env.AIRTABLE_BASE_ID // Log the actual base ID to verify it's correct
+      tableName: 'Leads',
+      baseId: process.env.AIRTABLE_BASE_ID
     });
 
     if (!process.env.AIRTABLE_API_KEY) {
@@ -48,7 +48,7 @@ export async function GET(request: Request) {
     }
 
     const base = airtable.base(process.env.AIRTABLE_BASE_ID);
-    const tableName = process.env.AIRTABLE_TABLE_NAME || 'Leads';
+    const tableName = 'Leads';
     console.log('Attempting to access table:', tableName);
 
     const { searchParams } = new URL(request.url);

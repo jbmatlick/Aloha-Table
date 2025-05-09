@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 export default function Contact() {
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -16,6 +18,7 @@ export default function Contact() {
     preferredDate: '',
     details: '',
     preferredContact: '',
+    referrerId: ''
   });
 
   const [status, setStatus] = useState<{
@@ -24,6 +27,14 @@ export default function Contact() {
   }>({ type: null, message: '' });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const ref = searchParams.get('ref');
+    if (ref) {
+      console.log('Referral ID found:', ref);
+      setFormData(prev => ({ ...prev, referrerId: ref }));
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +47,15 @@ export default function Contact() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          preferredDate: formData.preferredDate,
+          contactMethod: formData.preferredContact,
+          message: formData.details,
+          referrerId: formData.referrerId
+        }),
       });
 
       const data = await response.json();
@@ -55,9 +74,10 @@ export default function Contact() {
           preferredDate: '',
           details: '',
           preferredContact: '',
+          referrerId: ''
         });
       } else {
-        throw new Error(data.message || 'Something went wrong');
+        throw new Error(data.error || 'Something went wrong');
       }
     } catch (error) {
       setStatus({
@@ -174,6 +194,16 @@ export default function Contact() {
                   {status.message}
                 </motion.div>
               )}
+
+              {/* Hidden referrer ID field */}
+              {formData.referrerId && (
+                <input
+                  type="hidden"
+                  name="referrerId"
+                  value={formData.referrerId}
+                />
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Full Name */}
                 <div className="md:col-span-2">
