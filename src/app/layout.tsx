@@ -9,6 +9,11 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfa
 export const metadata: Metadata = {
   title: 'Salt and Serenity | Private Chef Services on Kauai',
   description: 'Elevating island dining with curated private chef experiences, wine tastings, and personalized meal plans',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({
@@ -18,9 +23,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="shortcut icon" href="/favicon.ico" />
-      </head>
       <body className={`${inter.variable} ${playfair.variable} font-sans`}>
         {children}
       </body>
