@@ -188,62 +188,113 @@ function ContactForm() {
             />
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Full Name */}
-            <div className="md:col-span-2">
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="fullName"
-                id="fullName"
-                required
-                value={formData.fullName}
-                onChange={handleChange}
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
-                autoComplete="name"
-              />
-            </div>
-
-            {/* Email */}
+          <div className="space-y-8">
+            {/* Section 1: Tell us about yourself */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
-                autoComplete="email"
-              />
+              <h2 className="text-2xl font-serif text-gray-900 mb-6">Tell us about yourself</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Full Name */}
+                <div className="md:col-span-2">
+                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="fullName"
+                    id="fullName"
+                    required
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
+                    autoComplete="name"
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
+                    autoComplete="email"
+                  />
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    id="phone"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
+                    autoComplete="tel"
+                    inputMode="tel"
+                  />
+                </div>
+
+                {/* Preferred Contact Method */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    How would you like us to contact you? <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                    <label className="inline-flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="preferredContact"
+                        value="Email Me"
+                        required
+                        checked={formData.preferredContact === 'Email Me'}
+                        onChange={handleChange}
+                        className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
+                      />
+                      <span className="ml-2 text-gray-700">Email Me</span>
+                    </label>
+                    <label className="inline-flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="preferredContact"
+                        value="Text Me"
+                        required
+                        checked={formData.preferredContact === 'Text Me'}
+                        onChange={handleChange}
+                        className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
+                      />
+                      <span className="ml-2 text-gray-700">Text Me</span>
+                    </label>
+                    <label className="inline-flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="preferredContact"
+                        value="Call Me"
+                        required
+                        checked={formData.preferredContact === 'Call Me'}
+                        onChange={handleChange}
+                        className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
+                      />
+                      <span className="ml-2 text-gray-700">Call Me</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Phone */}
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                id="phone"
-                required
-                value={formData.phone}
-                onChange={handleChange}
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
-                autoComplete="tel"
-                inputMode="tel"
-              />
-            </div>
-
-            {/* Group Section */}
-            <div className="md:col-span-2">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Tell us about your group (optional)</h3>
+            {/* Section 2: Tell us about your event */}
+            <div className="bg-gray-50 rounded-xl p-6 md:p-8">
+              <h2 className="text-2xl font-serif text-gray-900 mb-6">Tell us about your event</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Number of Adults */}
                 <div>
@@ -278,91 +329,46 @@ function ContactForm() {
                     inputMode="numeric"
                   />
                 </div>
+
+                {/* Preferred Date */}
+                <div className="md:col-span-2">
+                  <label htmlFor="preferredDate" className="block text-sm font-medium text-gray-700 mb-1">
+                    Preferred Date(s) <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    name="preferredDate"
+                    id="preferredDate"
+                    required
+                    placeholder="e.g., June 15–20, or any weekend in July"
+                    value={formData.preferredDate}
+                    onChange={handleChange}
+                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
+                    rows={2}
+                  />
+                </div>
+
+                {/* Additional Details */}
+                <div className="md:col-span-2">
+                  <label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-1">
+                    Additional Details / Questions <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    name="details"
+                    id="details"
+                    rows={4}
+                    required
+                    value={formData.details}
+                    onChange={handleChange}
+                    className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
+                    placeholder="Any themes, allergies, or special requests?"
+                    autoComplete="off"
+                  />
+                </div>
               </div>
-            </div>
-
-            {/* Preferred Date */}
-            <div className="md:col-span-2">
-              <label htmlFor="preferredDate" className="block text-sm font-medium text-gray-700 mb-1">
-                Preferred Date(s) <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                name="preferredDate"
-                id="preferredDate"
-                required
-                placeholder="e.g., June 15–20, or any weekend in July"
-                value={formData.preferredDate}
-                onChange={handleChange}
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
-                rows={2}
-              />
-            </div>
-
-            {/* Preferred Contact Method */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                How would you like us to contact you? <span className="text-red-500">*</span>
-              </label>
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                <label className="inline-flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="preferredContact"
-                    value="Email Me"
-                    required
-                    checked={formData.preferredContact === 'Email Me'}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
-                  />
-                  <span className="ml-2 text-gray-700">Email Me</span>
-                </label>
-                <label className="inline-flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="preferredContact"
-                    value="Text Me"
-                    required
-                    checked={formData.preferredContact === 'Text Me'}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
-                  />
-                  <span className="ml-2 text-gray-700">Text Me</span>
-                </label>
-                <label className="inline-flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="preferredContact"
-                    value="Call Me"
-                    required
-                    checked={formData.preferredContact === 'Call Me'}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
-                  />
-                  <span className="ml-2 text-gray-700">Call Me</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Additional Details */}
-            <div className="md:col-span-2">
-              <label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-1">
-                Tell us more about your event <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                name="details"
-                id="details"
-                rows={4}
-                required
-                value={formData.details}
-                onChange={handleChange}
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
-                placeholder="Any themes, allergies, or special requests?"
-                autoComplete="off"
-              />
             </div>
 
             {/* Submit Button */}
-            <div className="md:col-span-2 pt-4">
+            <div className="pt-4">
               <button
                 type="submit"
                 disabled={isSubmitting}
