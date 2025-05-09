@@ -19,25 +19,26 @@ interface ContactFields {
   'Contact Method': string;
   'Additional Details': string;
   'Status': string;
-  'Created At': string;
 }
 
 export async function POST(request: Request) {
   try {
     const { fullName, email, phone, adults, children, preferredDate, details, preferredContact } = await request.json();
 
-    // Create a record in Airtable
-    const record = await base(tableName).create({
+    const fields: ContactFields = {
       'Full Name': fullName || '',
       'Email': email || '',
       'Phone': phone || '',
       'Number of Adults': adults ? Number(adults) : null,
       'Number of Children': children ? Number(children) : null,
       'Preferred Date': preferredDate || '',
-      'Contact Method': preferredContact === 'Text Me' ? 'Text Me' : preferredContact === 'Call Me' ? 'Call Me' : 'Email Me',
+      'Contact Method': preferredContact || 'Email Me',
       'Additional Details': details || '',
       'Status': 'New'
-    });
+    };
+
+    // Create a record in Airtable
+    const record = await base(tableName).create(fields);
 
     return NextResponse.json({ success: true, record });
   } catch (error) {
