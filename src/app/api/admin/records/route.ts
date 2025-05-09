@@ -7,7 +7,8 @@ export async function GET(request: Request) {
     console.log('Environment check:', {
       hasApiKey: !!process.env.AIRTABLE_API_KEY,
       hasBaseId: !!process.env.AIRTABLE_BASE_ID,
-      tableName: process.env.AIRTABLE_TABLE_NAME || 'Leads'
+      tableName: process.env.AIRTABLE_TABLE_NAME || 'Leads',
+      baseId: process.env.AIRTABLE_BASE_ID // Log the actual base ID to verify it's correct
     });
 
     if (!process.env.AIRTABLE_API_KEY) {
@@ -31,6 +32,7 @@ export async function GET(request: Request) {
 
     const base = airtable.base(process.env.AIRTABLE_BASE_ID);
     const tableName = process.env.AIRTABLE_TABLE_NAME || 'Leads';
+    console.log('Attempting to access table:', tableName);
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
@@ -39,44 +41,53 @@ export async function GET(request: Request) {
 
     // Get total count from Airtable
     console.log('Fetching all records for count...');
-    const allRecords = await base(tableName)
-      .select()
-      .all();
-    
-    const total = allRecords.length;
-    console.log('Total records found:', total);
+    try {
+      const allRecords = await base(tableName)
+        .select()
+        .all();
+      
+      const total = allRecords.length;
+      console.log('Total records found:', total);
 
-    // Then fetch the paginated records
-    console.log('Fetching paginated records...');
-    const records = await base(tableName)
-      .select({
-        maxRecords: pageSize,
-        sort: [{ field: 'Created At', direction: 'desc' }],
-        offset: offset
-      })
-      .all();
+      // Then fetch the paginated records
+      console.log('Fetching paginated records...');
+      const records = await base(tableName)
+        .select({
+          maxRecords: pageSize,
+          sort: [{ field: 'Created At', direction: 'desc' }],
+          offset: offset
+        })
+        .all();
 
-    // Transform the records to match the expected format
-    const formattedRecords = records.map(record => ({
-      id: record.id,
-      fields: {
-        'Full Name': record.get('Full Name') || '',
-        'Email': record.get('Email') || '',
-        'Preferred Date': record.get('Preferred Date') || '',
-        'Contact Method': record.get('Contact Method') || '',
-        'Created At': record.get('Created At') || new Date().toISOString()
-      }
-    }));
+      // Transform the records to match the expected format
+      const formattedRecords = records.map(record => ({
+        id: record.id,
+        fields: {
+          'Full Name': record.get('Full Name') || '',
+          'Email': record.get('Email') || '',
+          'Preferred Date': record.get('Preferred Date') || '',
+          'Contact Method': record.get('Contact Method') || '',
+          'Created At': record.get('Created At') || new Date().toISOString()
+        }
+      }));
 
-    console.log('Records fetched:', formattedRecords.length);
+      console.log('Records fetched:', formattedRecords.length);
 
-    return NextResponse.json({ 
-      records: formattedRecords,
-      total,
-      page,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize)
-    });
+      return NextResponse.json({ 
+        records: formattedRecords,
+        total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize)
+      });
+    } catch (airtableError) {
+      console.error('Airtable query error:', {
+        error: airtableError,
+        message: airtableError instanceof Error ? airtableError.message : 'Unknown error',
+        stack: airtableError instanceof Error ? airtableError.stack : undefined
+      });
+      throw airtableError;
+    }
   } catch (error) {
     // Enhanced error logging
     console.error('Error details:', {
