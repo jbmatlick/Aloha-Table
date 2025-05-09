@@ -37,6 +37,12 @@ const Navbar = () => {
               </Link>
             ))}
             <Link
+              href="/login"
+              className="text-gray-400 hover:text-gray-600 text-sm transition-colors"
+            >
+              Login
+            </Link>
+            <Link
               href="/contact"
               className="bg-island-green text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors"
             >
