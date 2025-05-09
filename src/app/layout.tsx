@@ -10,9 +10,13 @@ export const metadata: Metadata = {
   title: 'Salt and Serenity | Private Chef Services on Kauai',
   description: 'Elevating island dining with curated private chef experiences, wine tastings, and personalized meal plans',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: [
+      { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon-16x16.png', type: 'image/png', sizes: '16x16' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', type: 'image/png', sizes: '180x180' },
+    ],
   },
 };
 
@@ -23,6 +27,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+      </head>
       <body className={`${inter.variable} ${playfair.variable} font-sans`}>
         {children}
       </body>
