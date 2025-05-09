@@ -17,6 +17,7 @@ const Hero = () => {
           className="object-cover"
           sizes="100vw"
           quality={90}
+          loading="eager"
         />
         <div className="absolute inset-0 bg-black/40" />
       </div>
