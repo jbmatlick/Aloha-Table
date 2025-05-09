@@ -40,7 +40,8 @@ export async function POST(request: Request) {
       'Preferred Date': preferredDate || '',
       'Contact Method': contactMethod,
       'Additional Details': message || '',
-      'Referrer': referrerId ? [referrerId] : []
+      'Referrer': referrerId ? [referrerId] : [],
+      'Environment': process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
     });
 
     // Use production URL

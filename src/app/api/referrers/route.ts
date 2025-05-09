@@ -39,7 +39,8 @@ export async function POST(request: Request) {
 
     const record = await table.create({
       'Full Name': name,
-      'Email': email
+      'Email': email,
+      'Environment': process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
     });
 
     // Create the referral link using production URL
