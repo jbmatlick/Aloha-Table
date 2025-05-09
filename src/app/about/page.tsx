@@ -13,7 +13,7 @@ export default function AboutPage() {
         {/* Hero Section */}
         <div className="relative h-[60vh] min-h-[400px] w-full">
           <Image
-            src="/images/chefs-together.jpg"
+            src="/images/chefs-back-to-back.jpg"
             alt="Angie and Iris Oliveras"
             fill
             className="object-cover"
@@ -34,15 +34,60 @@ export default function AboutPage() {
 
         {/* Chef Profiles Section */}
         <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+          {/* Desktop Layout */}
+          <div className="hidden md:block">
+            {/* Back-to-back image */}
+            <div className="relative w-full h-[600px] mb-16 rounded-lg overflow-hidden shadow-md">
+              <Image
+                src="/images/chefs-back-to-back.jpg"
+                alt="Angie and Iris Oliveras"
+                fill
+                className="object-cover"
+              />
+            </div>
+
+            {/* Bios side by side */}
+            <div className="grid grid-cols-2 gap-16">
+              {/* Angie's Bio */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="text-left"
+              >
+                <h2 className="text-3xl font-serif text-gray-900 mb-2">Angie Oliveras</h2>
+                <p className="text-xl text-island-green font-medium mb-6">The Salt</p>
+                <p className="text-gray-600 leading-relaxed">
+                  I cook the way Kauai feels at sunset — warm, bold, and a little wild. My flavors are loud, honest, and rooted in the local land. After years spent working in busy kitchens from LA to Oahu, I came home to bring fire back to the plate — grilled pineapple, seared ahi, citrus marinades kissed by sea breeze. I love cooking barefoot, where the sound of the surf meets the sizzle of a hot pan. Salt isn't just a seasoning — it's an attitude.
+                </p>
+              </motion.div>
+
+              {/* Iris's Bio */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-left"
+              >
+                <h2 className="text-3xl font-serif text-gray-900 mb-2">Iris Oliveras</h2>
+                <p className="text-xl text-island-green font-medium mb-6">The Serenity</p>
+                <p className="text-gray-600 leading-relaxed">
+                  For me, cooking is meditation. It's the rustle of ti leaves, the calm of ocean air moving through open windows, and the soft perfume of poached mango in the afternoon light. I focus on nourishment that's elegant and unfussy — subtle, seasonal, and grounded in aloha. I've studied traditional Hawaiian ingredients and modern plant-forward cuisine to bring peaceful balance to every meal. I'm the yin to Angie's yang — the breeze after the heat.
+                </p>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Mobile Layout */}
+          <div className="md:hidden space-y-16">
             {/* Angie's Profile */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="flex flex-col lg:flex-row items-center lg:items-start gap-8"
+              className="flex flex-col items-center"
             >
-              <div className="relative w-64 h-80 lg:w-80 lg:h-96 rounded-lg overflow-hidden">
+              <div className="relative w-64 h-80 rounded-lg overflow-hidden shadow-md mb-8">
                 <Image
                   src="/images/angie.jpg"
                   alt="Angie Oliveras"
@@ -50,7 +95,7 @@ export default function AboutPage() {
                   className="object-cover"
                 />
               </div>
-              <div className="flex-1 text-center lg:text-left">
+              <div className="text-center">
                 <h2 className="text-3xl font-serif text-gray-900 mb-2">Angie Oliveras</h2>
                 <p className="text-xl text-island-green font-medium mb-6">The Salt</p>
                 <p className="text-gray-600 leading-relaxed">
@@ -64,9 +109,9 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex flex-col lg:flex-row-reverse items-center lg:items-start gap-8"
+              className="flex flex-col items-center"
             >
-              <div className="relative w-64 h-80 lg:w-80 lg:h-96 rounded-lg overflow-hidden">
+              <div className="relative w-64 h-80 rounded-lg overflow-hidden shadow-md mb-8">
                 <Image
                   src="/images/iris.jpg"
                   alt="Iris Oliveras"
@@ -74,7 +119,7 @@ export default function AboutPage() {
                   className="object-cover"
                 />
               </div>
-              <div className="flex-1 text-center lg:text-left">
+              <div className="text-center">
                 <h2 className="text-3xl font-serif text-gray-900 mb-2">Iris Oliveras</h2>
                 <p className="text-xl text-island-green font-medium mb-6">The Serenity</p>
                 <p className="text-gray-600 leading-relaxed">
