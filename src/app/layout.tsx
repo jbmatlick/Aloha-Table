@@ -9,6 +9,7 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfa
 export const metadata: Metadata = {
   title: 'Island Table | Private Chef Services on Kauai',
   description: 'Curated dinners, wine tastings, and meal plans for unforgettable island experiences',
+  // Force rebuild
 };
 
 export default function RootLayout({
