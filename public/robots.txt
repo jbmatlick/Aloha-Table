@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /api/*
+
+Sitemap: https://salt-and-serenity.com/sitemap.xml 
