@@ -262,47 +262,49 @@ function ContactForm() {
 
                 {/* Preferred Contact Method */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    How would you like us to contact you? <span className="text-red-500">*</span>
-                  </label>
-                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                    <label className="inline-flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="preferredContact"
-                        value="Email Me"
-                        required
-                        checked={formData.preferredContact === 'Email Me'}
-                        onChange={handleChange}
-                        className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
-                      />
-                      <span className="ml-2 text-gray-700">Email Me</span>
-                    </label>
-                    <label className="inline-flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="preferredContact"
-                        value="Text Me"
-                        required
-                        checked={formData.preferredContact === 'Text Me'}
-                        onChange={handleChange}
-                        className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
-                      />
-                      <span className="ml-2 text-gray-700">Text Me</span>
-                    </label>
-                    <label className="inline-flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="preferredContact"
-                        value="Call Me"
-                        required
-                        checked={formData.preferredContact === 'Call Me'}
-                        onChange={handleChange}
-                        className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
-                      />
-                      <span className="ml-2 text-gray-700">Call Me</span>
-                    </label>
-                  </div>
+                  <fieldset>
+                    <legend className="block text-sm font-medium text-gray-700 mb-3">
+                      How would you like us to contact you? <span className="text-red-500">*</span>
+                    </legend>
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                      <label className="inline-flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="preferredContact"
+                          value="Email Me"
+                          required
+                          checked={formData.preferredContact === 'Email Me'}
+                          onChange={handleChange}
+                          className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
+                        />
+                        <span className="ml-2 text-gray-700">Email Me</span>
+                      </label>
+                      <label className="inline-flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="preferredContact"
+                          value="Text Me"
+                          required
+                          checked={formData.preferredContact === 'Text Me'}
+                          onChange={handleChange}
+                          className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
+                        />
+                        <span className="ml-2 text-gray-700">Text Me</span>
+                      </label>
+                      <label className="inline-flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="preferredContact"
+                          value="Call Me"
+                          required
+                          checked={formData.preferredContact === 'Call Me'}
+                          onChange={handleChange}
+                          className="h-4 w-4 text-island-green focus:ring-island-green border-gray-300"
+                        />
+                        <span className="ml-2 text-gray-700">Call Me</span>
+                      </label>
+                    </div>
+                  </fieldset>
                 </div>
               </div>
             </div>
@@ -325,6 +327,7 @@ function ContactForm() {
                     onChange={handleChange}
                     className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
                     inputMode="numeric"
+                    autoComplete="off"
                   />
                 </div>
 
@@ -342,6 +345,7 @@ function ContactForm() {
                     onChange={handleChange}
                     className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
                     inputMode="numeric"
+                    autoComplete="off"
                   />
                 </div>
 
@@ -359,6 +363,7 @@ function ContactForm() {
                     onChange={handleChange}
                     className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-island-green focus:ring-island-green"
                     rows={2}
+                    autoComplete="off"
                   />
                 </div>
 
