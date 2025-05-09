@@ -148,14 +148,14 @@ export async function POST(request: Request) {
         `
       },
       referrer_notification: {
-        subject: "🌟 Someone joined thanks to you!",
+        subject: '🌟 Someone joined thanks to you!',
         html: `
           <!DOCTYPE html>
           <html>
             <head>
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>New Referral!</title>
+              <title>New Referral</title>
             </head>
             <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f5f0;">
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
@@ -170,8 +170,16 @@ export async function POST(request: Request) {
                       <tr>
                         <td style="color: #333333; font-size: 16px; line-height: 1.6;">
                           <p style="margin: 0 0 20px;">Hi ${templateData.referrerName},</p>
-                          <p style="margin: 0 0 20px;">Just a heads up — ${templateData.contactName} just submitted a request through your referral link! 🤍</p>
-                          <p style="margin: 0 0 30px;">Thanks again for sharing Salt & Serenity with your friends. You're helping us grow our island table, one guest at a time.</p>
+                          <p style="margin: 0 0 20px;">Exciting news — ${templateData.contactName} just reached out through your referral link! 🤍</p>
+                          <p style="margin: 0 0 20px;">Thanks again for spreading the word. Every person you refer helps build a stronger Salt & Serenity community — and we'll make sure to show our appreciation.</p>
+                          <p style="margin: 0 0 20px;">As a reminder, for each confirmed booking from your referrals, you'll earn exclusive perks or payment (details coming soon). It's our way of saying mahalo for helping us grow our island table.</p>
+                          <div style="background-color: #f8f5f0; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <p style="margin: 0 0 10px; font-weight: bold;">Keep sharing your link and helping create memorable meals on Kauai:</p>
+                            <p style="margin: 0 0 10px; font-weight: bold;">🔗 Your link:</p>
+                            <p style="margin: 0;">
+                              <a href="${templateData.referralLink}" style="color: #2F4F4F; word-break: break-all; text-decoration: none; border-bottom: 1px solid #2F4F4F;">${templateData.referralLink}</a>
+                            </p>
+                          </div>
                           <p style="margin: 0; color: #2F4F4F; font-style: italic;">Gratefully,<br>Iris<br>Salt & Serenity</p>
                         </td>
                       </tr>
