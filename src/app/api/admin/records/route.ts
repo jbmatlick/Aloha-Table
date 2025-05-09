@@ -19,12 +19,15 @@ export async function GET(request: Request) {
     // First, get the total count
     const countResult = await base(tableName)
       .select({
-        maxRecords: 1,
-        fields: ['Created At']
+        maxRecords: 1
       })
       .all();
 
-    const total = countResult.length > 0 ? countResult[0]._rawJson.fields['Created At'] : 0;
+    // Get total count from Airtable
+    const total = await base(tableName)
+      .select()
+      .all()
+      .then(records => records.length);
 
     // Then fetch the paginated records
     const records = await base(tableName)
