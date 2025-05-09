@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       'Number of Adults': adults ? Number(adults) : null,
       'Number of Children': children ? Number(children) : null,
       'Preferred Date': preferredDate || '',
-      'Contact Method': preferredContact || 'Email Me',
+      'Contact Method': preferredContact === 'Text Me' ? 'Text Me' : preferredContact === 'Call Me' ? 'Call Me' : 'Email Me',
       'Additional Details': details || '',
       'Status': 'New'
     });
