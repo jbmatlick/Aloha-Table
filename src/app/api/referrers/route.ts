@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     try {
       console.log('Attempting to send email to:', email);
       const emailData = await resend.emails.send({
-        from: 'onboarding@resend.dev',
+        from: 'Iris <iris@salt-and-serenity.com>',
         to: email,
         subject: "You're in! Let's get cooking 🌺",
         html: `

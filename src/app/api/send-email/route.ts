@@ -81,7 +81,7 @@ export async function POST(request: Request) {
     console.log('With data:', templateData);
 
     const emailData = await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: 'Iris <iris@salt-and-serenity.com>',
       to,
       subject: selectedTemplate.subject,
       html: selectedTemplate.html,

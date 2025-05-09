@@ -188,14 +188,14 @@ function ContactForm() {
             />
           )}
 
-          <div className="space-y-8">
+          <div className="space-y-12">
             {/* Section 1: Tell us about yourself */}
-            <div>
-              <h2 className="text-2xl font-serif text-gray-900 mb-6">Tell us about yourself</h2>
+            <div className="bg-white rounded-xl p-8 md:p-10 shadow-sm">
+              <h2 className="text-2xl font-serif text-gray-900 mb-8">Tell us about yourself</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Full Name */}
                 <div className="md:col-span-2">
-                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
                     Full Name <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -212,7 +212,7 @@ function ContactForm() {
 
                 {/* Email */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -229,7 +229,7 @@ function ContactForm() {
 
                 {/* Phone */}
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -251,7 +251,7 @@ function ContactForm() {
                     How would you like us to contact you? <span className="text-red-500">*</span>
                   </label>
                   <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                    <label className="inline-flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label className="inline-flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="preferredContact"
@@ -263,7 +263,7 @@ function ContactForm() {
                       />
                       <span className="ml-2 text-gray-700">Email Me</span>
                     </label>
-                    <label className="inline-flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label className="inline-flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="preferredContact"
@@ -275,7 +275,7 @@ function ContactForm() {
                       />
                       <span className="ml-2 text-gray-700">Text Me</span>
                     </label>
-                    <label className="inline-flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                    <label className="inline-flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="preferredContact"
@@ -293,12 +293,12 @@ function ContactForm() {
             </div>
 
             {/* Section 2: Tell us about your event */}
-            <div className="bg-gray-50 rounded-xl p-6 md:p-8">
-              <h2 className="text-2xl font-serif text-gray-900 mb-6">Tell us about your event</h2>
+            <div className="bg-gray-50 rounded-xl p-8 md:p-10 shadow-sm">
+              <h2 className="text-2xl font-serif text-gray-900 mb-8">Tell us about your event</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Number of Adults */}
                 <div>
-                  <label htmlFor="adults" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="adults" className="block text-sm font-medium text-gray-700 mb-2">
                     How many adults?
                   </label>
                   <input
@@ -315,7 +315,7 @@ function ContactForm() {
 
                 {/* Number of Children */}
                 <div>
-                  <label htmlFor="children" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="children" className="block text-sm font-medium text-gray-700 mb-2">
                     How many children under 12?
                   </label>
                   <input
@@ -332,7 +332,7 @@ function ContactForm() {
 
                 {/* Preferred Date */}
                 <div className="md:col-span-2">
-                  <label htmlFor="preferredDate" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="preferredDate" className="block text-sm font-medium text-gray-700 mb-2">
                     Preferred Date(s) <span className="text-red-500">*</span>
                   </label>
                   <textarea
@@ -349,7 +349,7 @@ function ContactForm() {
 
                 {/* Additional Details */}
                 <div className="md:col-span-2">
-                  <label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-2">
                     Additional Details / Questions <span className="text-red-500">*</span>
                   </label>
                   <textarea
