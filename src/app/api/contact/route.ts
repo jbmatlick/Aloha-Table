@@ -62,10 +62,13 @@ export async function POST(request: Request) {
     // Send confirmation email
     try {
       if (!process.env.BREVO_API_KEY) {
+        console.error('BREVO_API_KEY is missing');
         throw new Error('BREVO_API_KEY is not configured');
       }
 
       console.log('Attempting to send email to:', email);
+      console.log('Using Brevo API key:', process.env.BREVO_API_KEY.substring(0, 5) + '...');
+      
       const response = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
@@ -126,7 +129,7 @@ export async function POST(request: Request) {
 
       if (!response.ok) {
         const error = await response.json();
-        console.error('Brevo API error:', error);
+        console.error('Brevo API error details:', error);
         throw new Error(`Failed to send email: ${error.message || 'Unknown error'}`);
       }
 
