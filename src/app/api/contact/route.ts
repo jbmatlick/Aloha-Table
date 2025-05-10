@@ -76,10 +76,24 @@ export async function POST(request: Request) {
       }
 
       console.log('Attempting to send email to:', email);
-      console.log('Request headers:', {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'api-key': process.env.BREVO_API_KEY.substring(0, 10) + '...'
+      console.log('Request details:', {
+        url: 'https://api.brevo.com/v3/smtp/email',
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': process.env.BREVO_API_KEY.substring(0, 10) + '...'
+        },
+        body: {
+          sender: {
+            name: 'Salt & Serenity',
+            email: 'hello@salt-and-serenity.com'
+          },
+          to: [{
+            email: email
+          }],
+          subject: "Welcome to Salt & Serenity 🌴"
+        }
       });
       
       const response = await fetch('https://api.brevo.com/v3/smtp/email', {
