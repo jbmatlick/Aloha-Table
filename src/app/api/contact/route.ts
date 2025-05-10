@@ -6,12 +6,23 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: Request) {
   try {
-    const { name, email, message, referrerId } = await request.json();
+    const { 
+      name, 
+      email, 
+      phone,
+      preferredDate,
+      contactMethod,
+      message,
+      referrerId,
+      referrerName,
+      adults,
+      children 
+    } = await request.json();
 
     // Validate inputs
-    if (!name || !email || !message) {
+    if (!name || !email) {
       return NextResponse.json(
-        { error: 'Name, email, and message are required' },
+        { error: 'Name and email are required' },
         { status: 400 }
       );
     }
@@ -32,14 +43,20 @@ export async function POST(request: Request) {
     });
 
     const base = airtable.base(process.env.AIRTABLE_BASE_ID);
-    const table = base('Contacts');
+    const table = base('Leads');
 
     const record = await table.create({
       'Full Name': name,
       'Email': email,
-      'Message': message,
+      'Phone': phone || '',
+      'Preferred Date': preferredDate || '',
+      'Contact Method': contactMethod || '',
+      'Additional Details': message || '',
       'Referrer': referrerId ? [referrerId] : [],
-      'Environment': process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      'Environment': process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+      'Number of Adults': parseInt(adults) || 0,
+      'Number of Children': parseInt(children) || 0,
+      'Status': 'New'
     });
 
     // Send confirmation email
@@ -206,7 +223,7 @@ export async function POST(request: Request) {
       id: record.id,
       name: record.get('Full Name'),
       email: record.get('Email'),
-      message: record.get('Message'),
+      message: record.get('Additional Details'),
       referrerId: referrerId || null
     });
   } catch (error) {
