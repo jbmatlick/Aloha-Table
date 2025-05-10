@@ -6,6 +6,15 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: Request) {
   try {
+    // Debug environment variables
+    console.log('Environment check:');
+    console.log('BREVO_API_KEY exists:', !!process.env.BREVO_API_KEY);
+    console.log('BREVO_API_KEY length:', process.env.BREVO_API_KEY?.length);
+    console.log('BREVO_API_KEY first 10 chars:', process.env.BREVO_API_KEY?.substring(0, 10));
+    console.log('NEXT_PUBLIC_BASE_URL:', process.env.NEXT_PUBLIC_BASE_URL);
+    console.log('AIRTABLE_API_KEY exists:', !!process.env.AIRTABLE_API_KEY);
+    console.log('AIRTABLE_BASE_ID exists:', !!process.env.AIRTABLE_BASE_ID);
+
     const { 
       name, 
       email, 
@@ -67,7 +76,11 @@ export async function POST(request: Request) {
       }
 
       console.log('Attempting to send email to:', email);
-      console.log('Using Brevo API key:', process.env.BREVO_API_KEY.substring(0, 5) + '...');
+      console.log('Request headers:', {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'api-key': process.env.BREVO_API_KEY.substring(0, 10) + '...'
+      });
       
       const response = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
