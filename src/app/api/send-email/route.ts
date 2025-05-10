@@ -1,7 +1,4 @@
 import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 type EmailTemplate = 'referrer_signup' | 'contact_referral' | 'referrer_notification' | 'contact_no_referral';
 
@@ -210,13 +207,32 @@ export async function POST(request: Request) {
     console.log('Using template:', template);
     console.log('With data:', templateData);
 
-    const emailData = await resend.emails.send({
-      from: 'Iris <iris@salt-and-serenity.com>',
-      to,
-      subject: selectedTemplate.subject,
-      html: selectedTemplate.html,
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'api-key': process.env.BREVO_API_KEY || '',
+      },
+      body: JSON.stringify({
+        sender: {
+          name: 'Salt & Serenity',
+          email: 'hello@salt-and-serenity.com'
+        },
+        to: [{
+          email: to
+        }],
+        subject: selectedTemplate.subject,
+        htmlContent: selectedTemplate.html
+      })
     });
 
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to send email');
+    }
+
+    const emailData = await response.json();
     console.log('Email sent successfully:', emailData);
     return NextResponse.json(emailData);
   } catch (error) {

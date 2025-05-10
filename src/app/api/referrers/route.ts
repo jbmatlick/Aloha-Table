@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server';
 import Airtable from 'airtable';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Email validation regex
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -50,58 +47,77 @@ export async function POST(request: Request) {
     // Send welcome email with referral link
     try {
       console.log('Attempting to send email to:', email);
-      const emailData = await resend.emails.send({
-        from: 'Iris <iris@salt-and-serenity.com>',
-        to: email,
-        subject: "You're in! Let's get cooking 🌺",
-        html: `
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Welcome to the Referral Program</title>
-            </head>
-            <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f5f0;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
-                <tr>
-                  <td style="padding: 40px 30px;">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="text-align: center; padding-bottom: 30px;">
-                          <h1 style="color: #2F4F4F; font-size: 28px; margin: 0; font-family: Georgia, serif;">You're in! Let's get cooking 🌺</h1>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="color: #333333; font-size: 16px; line-height: 1.6;">
-                          <p style="margin: 0 0 20px;">Hi ${name},</p>
-                          <p style="margin: 0 0 20px;">Thanks for joining our referral program — we're so glad to have you on board!</p>
-                          <p style="margin: 0 0 20px;">Salt & Serenity is all about creating unforgettable island experiences around food and community. By sharing your personal link, you're helping bring more amazing people to the table — and you'll be rewarded for it.</p>
-                          <p style="margin: 0 0 20px;">Whenever someone books an event through your link, you'll earn $50 as a thank you. Simple as that.</p>
-                          <div style="background-color: #f8f5f0; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                            <p style="margin: 0 0 10px; font-weight: bold;">Here's your personal link to share:</p>
-                            <p style="margin: 0;">
-                              🔗 <a href="${referralUrl}" style="color: #2F4F4F; word-break: break-all; text-decoration: none; border-bottom: 1px solid #2F4F4F;">${referralUrl}</a>
-                            </p>
-                          </div>
-                          <p style="margin: 0 0 30px;">We'll notify you each time someone signs up through it. Thanks again for helping us grow our ohana.</p>
-                          <p style="margin: 0; color: #2F4F4F; font-style: italic;">Warmly,<br>Iris<br>Salt & Serenity</p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="background-color: #f8f5f0; padding: 20px 30px; text-align: center; font-size: 12px; color: #666666;">
-                    <p style="margin: 0;">© ${new Date().getFullYear()} Salt and Serenity. All rights reserved.</p>
-                  </td>
-                </tr>
-              </table>
-            </body>
-          </html>
-        `
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': process.env.BREVO_API_KEY || '',
+        },
+        body: JSON.stringify({
+          sender: {
+            name: 'Salt & Serenity',
+            email: 'hello@salt-and-serenity.com'
+          },
+          to: [{
+            email: email
+          }],
+          subject: "You're in! Let's get cooking 🌺",
+          htmlContent: `
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Welcome to the Referral Program</title>
+              </head>
+              <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f5f0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+                  <tr>
+                    <td style="padding: 40px 30px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td style="text-align: center; padding-bottom: 30px;">
+                            <h1 style="color: #2F4F4F; font-size: 28px; margin: 0; font-family: Georgia, serif;">You're in! Let's get cooking 🌺</h1>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="color: #333333; font-size: 16px; line-height: 1.6;">
+                            <p style="margin: 0 0 20px;">Hi ${name},</p>
+                            <p style="margin: 0 0 20px;">Thanks for joining our referral program — we're so glad to have you on board!</p>
+                            <p style="margin: 0 0 20px;">Salt & Serenity is all about creating unforgettable island experiences around food and community. By sharing your personal link, you're helping bring more amazing people to the table — and you'll be rewarded for it.</p>
+                            <p style="margin: 0 0 20px;">Whenever someone books an event through your link, you'll earn $50 as a thank you. Simple as that.</p>
+                            <div style="background-color: #f8f5f0; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                              <p style="margin: 0 0 10px; font-weight: bold;">Here's your personal link to share:</p>
+                              <p style="margin: 0;">
+                                🔗 <a href="${referralUrl}" style="color: #2F4F4F; word-break: break-all; text-decoration: none; border-bottom: 1px solid #2F4F4F;">${referralUrl}</a>
+                              </p>
+                            </div>
+                            <p style="margin: 0 0 30px;">We'll notify you each time someone signs up through it. Thanks again for helping us grow our ohana.</p>
+                            <p style="margin: 0; color: #2F4F4F; font-style: italic;">Warmly,<br>Iris<br>Salt & Serenity</p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="background-color: #f8f5f0; padding: 20px 30px; text-align: center; font-size: 12px; color: #666666;">
+                      <p style="margin: 0;">© ${new Date().getFullYear()} Salt and Serenity. All rights reserved.</p>
+                    </td>
+                  </tr>
+                </table>
+              </body>
+            </html>
+          `
+        })
       });
 
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to send email');
+      }
+
+      const emailData = await response.json();
       console.log('Email sent successfully:', emailData);
     } catch (emailError) {
       console.error('Error sending email:', emailError);
