@@ -83,10 +83,19 @@ export async function POST(request: Request) {
         auth: {
           user: 'hello@salt-and-serenity.com',
           pass: process.env.BREVO_API_KEY
-        }
+        },
+        debug: true, // Enable debug logging
+        logger: true // Enable logger
       });
 
       console.log('Attempting to send email to:', email);
+      console.log('SMTP Configuration:', {
+        host: 'smtp-relay.brevo.com',
+        port: 587,
+        secure: false,
+        user: 'hello@salt-and-serenity.com',
+        passLength: process.env.BREVO_API_KEY?.length
+      });
       
       // Send welcome email
       await transporter.sendMail({
