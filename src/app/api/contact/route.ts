@@ -61,13 +61,17 @@ export async function POST(request: Request) {
 
     // Send confirmation email
     try {
+      if (!process.env.BREVO_API_KEY) {
+        throw new Error('BREVO_API_KEY is not configured');
+      }
+
       console.log('Attempting to send email to:', email);
       const response = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'api-key': process.env.BREVO_API_KEY || '',
+          'api-key': process.env.BREVO_API_KEY,
         },
         body: JSON.stringify({
           sender: {
@@ -122,19 +126,28 @@ export async function POST(request: Request) {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to send email');
+        console.error('Brevo API error:', error);
+        throw new Error(`Failed to send email: ${error.message || 'Unknown error'}`);
       }
 
       const emailData = await response.json();
       console.log('Email sent successfully:', emailData);
     } catch (emailError) {
       console.error('Error sending email:', emailError);
-      // Continue with the response even if email fails
+      // Return error response instead of continuing silently
+      return NextResponse.json(
+        { error: 'Failed to send email', details: emailError instanceof Error ? emailError.message : 'Unknown error' },
+        { status: 500 }
+      );
     }
 
     // If there's a referrer, send them a notification
     if (referrerId) {
       try {
+        if (!process.env.BREVO_API_KEY) {
+          throw new Error('BREVO_API_KEY is not configured');
+        }
+
         const referrerRecord = await base('Referrers').find(referrerId);
         const referrerName = referrerRecord.get('Full Name');
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://salt-and-serenity.com';
@@ -146,7 +159,7 @@ export async function POST(request: Request) {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'api-key': process.env.BREVO_API_KEY || '',
+            'api-key': process.env.BREVO_API_KEY,
           },
           body: JSON.stringify({
             sender: {
@@ -208,14 +221,19 @@ export async function POST(request: Request) {
 
         if (!response.ok) {
           const error = await response.json();
-          throw new Error(error.message || 'Failed to send email');
+          console.error('Brevo API error for referrer notification:', error);
+          throw new Error(`Failed to send referrer notification: ${error.message || 'Unknown error'}`);
         }
 
         const emailData = await response.json();
         console.log('Referrer notification sent successfully:', emailData);
       } catch (referrerEmailError) {
         console.error('Error sending referrer notification:', referrerEmailError);
-        // Continue with the response even if referrer notification fails
+        // Return error response instead of continuing silently
+        return NextResponse.json(
+          { error: 'Failed to send referrer notification', details: referrerEmailError instanceof Error ? referrerEmailError.message : 'Unknown error' },
+          { status: 500 }
+        );
       }
     }
 
