@@ -124,7 +124,7 @@ export default function Admin() {
               animate={{ opacity: 1, y: 0 }}
               className="text-3xl font-serif text-gray-900"
             >
-              Recent Submissions
+              Leads
             </motion.h1>
             <motion.button
               initial={{ opacity: 0 }}
