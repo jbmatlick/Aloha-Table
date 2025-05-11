@@ -16,11 +16,22 @@ interface ContactRecord {
   };
 }
 
+interface ReferrerRecord {
+  id: string;
+  fields: {
+    'Full Name': string;
+    'Email': string;
+    'Referrals Count'?: number;
+  };
+}
+
 export default function Admin() {
   const [records, setRecords] = useState<ContactRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [referrers, setReferrers] = useState<ReferrerRecord[]>([]);
+  const [isLoadingReferrers, setIsLoadingReferrers] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -55,6 +66,25 @@ export default function Admin() {
       };
 
       fetchRecords();
+
+      // Fetch referrers
+      const fetchReferrers = async () => {
+        try {
+          const response = await fetch('/api/admin/referrers', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          if (!response.ok) throw new Error('Failed to fetch referrers');
+          const data = await response.json();
+          setReferrers(data.referrers);
+        } catch (error) {
+          console.error('Error fetching referrers:', error);
+        } finally {
+          setIsLoadingReferrers(false);
+        }
+      };
+      fetchReferrers();
     }
   }, [router, currentPage]);
 
@@ -109,7 +139,7 @@ export default function Admin() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-white shadow-xl rounded-2xl overflow-hidden"
+            className="bg-white shadow-xl rounded-2xl overflow-hidden mb-12"
           >
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -133,29 +163,102 @@ export default function Admin() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {records.map((record) => (
-                    <tr key={record.id} className="hover:bg-gray-50">
-                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
-                        {record.fields['Full Name']}
-                      </td>
-                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
-                        {record.fields['Email']}
-                      </td>
-                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
-                        {record.fields['Preferred Date']}
-                      </td>
-                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
-                        {record.fields['Contact Method']}
-                      </td>
-                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
-                        {new Date(record.fields['Created At']).toLocaleDateString()}
+                  {records.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="py-16 text-center text-lg text-gray-400 font-serif">
+                        🌴 Still quiet out there. Let's get some guests to the party!
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    records.map((record) => (
+                      <tr key={record.id} className="hover:bg-gray-50">
+                        <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
+                          {record.fields['Full Name']}
+                        </td>
+                        <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
+                          {record.fields['Email']}
+                        </td>
+                        <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
+                          {record.fields['Preferred Date']}
+                        </td>
+                        <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
+                          {record.fields['Contact Method']}
+                        </td>
+                        <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
+                          {new Date(record.fields['Created At']).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
           </motion.div>
+
+          {/* Referrers Table Section */}
+          <div className="mt-16">
+            <h2 className="text-2xl font-serif text-gray-900 mb-6">Referrers</h2>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-white shadow-xl rounded-2xl overflow-hidden"
+            >
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Name
+                      </th>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Referral Link
+                      </th>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Referrals Count
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {isLoadingReferrers ? (
+                      <tr>
+                        <td colSpan={4} className="py-16 text-center text-lg text-gray-400 font-serif">
+                          Loading referrers...
+                        </td>
+                      </tr>
+                    ) : referrers.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="py-16 text-center text-lg text-gray-400 font-serif">
+                          🌴 No referrers yet. The more, the merrier!
+                        </td>
+                      </tr>
+                    ) : (
+                      referrers.map((ref) => (
+                        <tr key={ref.id} className="hover:bg-gray-50">
+                          <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
+                            {ref.fields['Full Name']}
+                          </td>
+                          <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
+                            {ref.fields['Email']}
+                          </td>
+                          <td className="px-4 sm:px-6 py-4 text-sm text-blue-600 underline">
+                            <a href={`/contact?ref=${ref.id}`} target="_blank" rel="noopener noreferrer">
+                              {`${window.location.origin}/contact?ref=${ref.id}`}
+                            </a>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
+                            {ref.fields['Referrals Count'] ?? '-'}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
+          </div>
 
           {/* Pagination */}
           <div className="mt-6 flex justify-center space-x-2">
