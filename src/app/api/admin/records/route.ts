@@ -1,23 +1,16 @@
 import { NextResponse } from 'next/server';
 import Airtable from 'airtable';
+import { getSession } from '@auth0/nextjs-auth0';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
-    // Check authentication
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    // Check authentication using Auth0 session
+    const session = await getSession();
+    if (!session?.user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.split(' ')[1];
-    if (token !== 'dummy-token') {
-      return NextResponse.json(
-        { error: 'Invalid token' },
         { status: 401 }
       );
     }
@@ -60,68 +53,41 @@ export async function GET(request: Request) {
 
     // Get total count from Airtable
     console.log('Fetching all records for count...');
-    try {
-      const allRecords = await base(tableName)
-        .select()
-        .all();
-      
-      const total = allRecords.length;
-      console.log('Total records found:', total);
+    const countQuery = await base(tableName).select().all();
+    const total = countQuery.length;
 
-      // Then fetch the paginated records
-      console.log('Fetching paginated records...');
-      const records = await base(tableName)
-        .select({
-          maxRecords: pageSize,
-          sort: [{ field: 'Created At', direction: 'desc' }],
-          offset: offset
-        })
-        .all();
+    // Get paginated records
+    const records = await base(tableName)
+      .select({
+        maxRecords: pageSize,
+        offset: offset,
+        sort: [{ field: 'Created At', direction: 'desc' }]
+      })
+      .all();
 
-      // Transform the records to match the expected format
-      const formattedRecords = records.map(record => ({
-        id: record.id,
-        fields: {
-          'Full Name': record.get('Full Name') || '',
-          'Email': record.get('Email') || '',
-          'Preferred Date': record.get('Preferred Date') || '',
-          'Contact Method': record.get('Contact Method') || '',
-          'Created At': record.get('Created At') || new Date().toISOString()
-        }
-      }));
+    const formattedRecords = records.map(record => ({
+      id: record.id,
+      fields: {
+        'Full Name': record.get('Full Name') || '',
+        'Email': record.get('Email') || '',
+        'Phone': record.get('Phone') || '',
+        'Preferred Date': record.get('Preferred Date') || '',
+        'Contact Method': record.get('Contact Method') || '',
+        'Additional Details': record.get('Additional Details') || '',
+        'Status': record.get('Status') || 'New'
+      }
+    }));
 
-      console.log('Records fetched:', formattedRecords.length);
-
-      return NextResponse.json({ 
-        records: formattedRecords,
-        total,
-        page,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize)
-      });
-    } catch (airtableError) {
-      console.error('Airtable query error:', {
-        error: airtableError,
-        message: airtableError instanceof Error ? airtableError.message : 'Unknown error',
-        stack: airtableError instanceof Error ? airtableError.stack : undefined
-      });
-      throw airtableError;
-    }
-  } catch (error) {
-    // Enhanced error logging
-    console.error('Error details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : 'Unknown error type',
-      error: error // Log the full error object
+    return NextResponse.json({
+      records: formattedRecords,
+      total,
+      page,
+      pageSize
     });
-    
+  } catch (error) {
+    console.error('Error fetching records:', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to fetch records', 
-        details: error instanceof Error ? error.message : 'Unknown error',
-        type: error instanceof Error ? error.name : 'Unknown error type'
-      },
+      { error: 'Failed to fetch records', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

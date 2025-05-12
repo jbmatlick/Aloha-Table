@@ -1,23 +1,16 @@
 import { NextResponse } from 'next/server';
 import Airtable from 'airtable';
+import { getSession } from '@auth0/nextjs-auth0';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
-    // Check authentication
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    // Check authentication using Auth0 session
+    const session = await getSession();
+    if (!session?.user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.split(' ')[1];
-    if (token !== 'dummy-token') {
-      return NextResponse.json(
-        { error: 'Invalid token' },
         { status: 401 }
       );
     }

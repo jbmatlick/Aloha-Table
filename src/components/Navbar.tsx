@@ -4,8 +4,10 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 const Navbar = () => {
+  const { user, error, isLoading } = useUser();
   const [isOpen, setIsOpen] = React.useState(false);
 
   const navItems = [
@@ -15,6 +17,10 @@ const Navbar = () => {
     { name: 'Contact', href: '/contact' },
     { name: 'Refer & Earn', href: '/refer' },
   ];
+
+  if (error) {
+    console.error('Auth0 user error:', error);
+  }
 
   return (
     <nav className="fixed w-full z-50 bg-white/90 backdrop-blur-sm shadow-sm">
@@ -37,12 +43,31 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-            <Link
-              href="/login"
-              className="text-gray-400 hover:text-gray-600 text-sm transition-colors"
-            >
-              Login
-            </Link>
+            {isLoading ? (
+              <span className="text-gray-600">Loading...</span>
+            ) : user ? (
+              <a
+                href="/api/auth/logout"
+                className="text-gray-400 hover:text-gray-600 text-sm transition-colors"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = '/api/auth/logout';
+                }}
+              >
+                Logout
+              </a>
+            ) : (
+              <a
+                href="/api/auth/login"
+                className="text-gray-400 hover:text-gray-600 text-sm transition-colors"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = '/api/auth/login';
+                }}
+              >
+                Login
+              </a>
+            )}
             <Link
               href="/contact"
               className="bg-island-green text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors"
@@ -86,13 +111,33 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-            <Link
-              href="/login"
-              className="block px-3 py-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-md"
-              onClick={() => setIsOpen(false)}
-            >
-              Login
-            </Link>
+            {isLoading ? (
+              <span className="block px-3 py-2 text-gray-600">Loading...</span>
+            ) : user ? (
+              <a
+                href="/api/auth/logout"
+                className="block px-3 py-2 text-gray-600 hover:text-gray-900"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = '/api/auth/logout';
+                  setIsOpen(false);
+                }}
+              >
+                Logout
+              </a>
+            ) : (
+              <a
+                href="/api/auth/login"
+                className="block px-3 py-2 text-gray-600 hover:text-gray-900"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = '/api/auth/login';
+                  setIsOpen(false);
+                }}
+              >
+                Login
+              </a>
+            )}
             <Link
               href="/contact"
               className="block px-3 py-2 bg-island-green text-white rounded-md hover:bg-emerald-700"
