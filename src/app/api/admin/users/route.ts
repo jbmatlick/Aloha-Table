@@ -140,7 +140,7 @@ export async function POST(req: Request) {
     }
 
     // Send welcome email via Brevo
-    const loginUrl = `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/api/auth/login`;
+    const loginUrl = `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/login?returnTo=/admin`;
     const html = `
       <div style="font-family: sans-serif;">
         <h2>Welcome to Salt & Serenity Admin</h2>
