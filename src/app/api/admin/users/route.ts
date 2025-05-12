@@ -145,7 +145,7 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         user_id: createdUser.user_id,
-        result_url: `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/admin?returnTo=/admin`,
+        result_url: `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/reset-complete`,
       }),
     });
     const ticketData = await ticketRes.json();
