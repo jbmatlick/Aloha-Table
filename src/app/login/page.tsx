@@ -1,10 +1,11 @@
 'use client';
 export const dynamic = "force-dynamic";
 
+import { Suspense } from 'react';
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function LoginPage() {
+function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get('returnTo');
@@ -24,5 +25,13 @@ export default function LoginPage() {
         <p className="text-gray-600">Please wait while we redirect you to the login page.</p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPageWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPage />
+    </Suspense>
   );
 } 
