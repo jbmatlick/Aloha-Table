@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Navbar from "../../components/Navbar";
@@ -36,7 +36,7 @@ interface Auth0User {
   email_verified?: boolean;
 }
 
-export default function Admin() {
+function Admin() {
   const [tab, setTab] = useState<"dashboard" | "users">(() => {
     const searchParams = useSearchParams();
     const tabParam = searchParams.get('tab');
@@ -488,5 +488,13 @@ export default function Admin() {
         </div>
       </main>
     </>
+  );
+}
+
+export default function AdminPageWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <Admin />
+    </Suspense>
   );
 }
