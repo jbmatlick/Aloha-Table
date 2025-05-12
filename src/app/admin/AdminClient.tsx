@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Navbar from "../../components/Navbar";
@@ -37,7 +37,7 @@ interface Auth0User {
 }
 
 function Admin() {
-  // ... (all the Admin function code from previous commit) ...
+  // ...full Admin function body from previous commit...
 }
 
 export default Admin; 
