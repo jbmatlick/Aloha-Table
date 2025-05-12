@@ -145,7 +145,8 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         user_id: createdUser.user_id,
-        result_url: `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/reset-complete`,
+        result_url: 'https://salt-and-serenity.com/reset-complete',
+        mark_email_as_verified: true,
       }),
     });
     const ticketData = await ticketRes.json();
