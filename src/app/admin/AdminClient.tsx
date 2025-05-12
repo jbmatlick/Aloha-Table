@@ -34,6 +34,21 @@ interface Auth0User {
   email: string;
   name?: string;
   email_verified?: boolean;
+  last_login?: string;
+}
+
+function formatLastLogin(lastLogin: string | undefined): string {
+  if (!lastLogin) return 'Never';
+  const date = new Date(lastLogin);
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'UTC'
+  }) + ' UTC';
 }
 
 function Admin() {
@@ -422,6 +437,7 @@ function Admin() {
                         <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                         <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email Verified</th>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
                         <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
                         <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                       </tr>
@@ -429,11 +445,11 @@ function Admin() {
                     <tbody className="bg-white divide-y divide-gray-200">
                       {isLoadingUsers ? (
                         <tr>
-                          <td colSpan={5} className="py-16 text-center text-lg text-gray-400 font-serif">Loading users...</td>
+                          <td colSpan={6} className="py-16 text-center text-lg text-gray-400 font-serif">Loading users...</td>
                         </tr>
                       ) : users.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="py-16 text-center text-lg text-gray-400 font-serif">No users found.</td>
+                          <td colSpan={6} className="py-16 text-center text-lg text-gray-400 font-serif">No users found.</td>
                         </tr>
                       ) : (
                         users.map((u) => (
@@ -441,6 +457,7 @@ function Admin() {
                             <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{u.email}</td>
                             <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{u.name || "-"}</td>
                             <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{u.email_verified ? "Yes" : "No"}</td>
+                            <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{formatLastLogin(u.last_login)}</td>
                             <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{u.user_id}</td>
                             <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
                               <button
