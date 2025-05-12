@@ -52,6 +52,7 @@ export default function Admin() {
   const [showedPassword, setShowedPassword] = useState<string | null>(null);
   const [showedEmail, setShowedEmail] = useState<string | null>(null);
   const [invitePassword, setInvitePassword] = useState("");
+  const [isDeletingUser, setIsDeletingUser] = useState<string | null>(null);
   const router = useRouter();
   const { user, error, isLoading: isLoadingUser } = useUser();
 
@@ -155,6 +156,37 @@ export default function Admin() {
     } catch (err) {
       setInviteStatus({ type: "error", message: "Network error: " + (err instanceof Error ? err.message : String(err)) });
       console.error("Invite error:", err);
+    }
+  };
+
+  // Delete user
+  const handleDeleteUser = async (userId: string) => {
+    if (!confirm('Are you sure you want to delete this user?')) {
+      return;
+    }
+    setIsDeletingUser(userId);
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setInviteStatus({ type: "error", message: (data.error || "Failed to delete user") + (data.details ? `: ${JSON.stringify(data.details)}` : "") });
+        console.error("Delete error:", data);
+      } else {
+        setInviteStatus({ type: "success", message: "User deleted successfully" });
+        // Refresh users
+        fetch("/api/admin/users")
+          .then((res) => res.json())
+          .then((data) => setUsers(data.users || []));
+      }
+    } catch (err) {
+      setInviteStatus({ type: "error", message: "Network error: " + (err instanceof Error ? err.message : String(err)) });
+      console.error("Delete error:", err);
+    } finally {
+      setIsDeletingUser(null);
     }
   };
 
@@ -395,16 +427,17 @@ export default function Admin() {
                         <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email Verified</th>
                         <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {isLoadingUsers ? (
                         <tr>
-                          <td colSpan={4} className="py-16 text-center text-lg text-gray-400 font-serif">Loading users...</td>
+                          <td colSpan={5} className="py-16 text-center text-lg text-gray-400 font-serif">Loading users...</td>
                         </tr>
                       ) : users.length === 0 ? (
                         <tr>
-                          <td colSpan={4} className="py-16 text-center text-lg text-gray-400 font-serif">No users found.</td>
+                          <td colSpan={5} className="py-16 text-center text-lg text-gray-400 font-serif">No users found.</td>
                         </tr>
                       ) : (
                         users.map((u) => (
@@ -413,6 +446,15 @@ export default function Admin() {
                             <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{u.name || "-"}</td>
                             <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{u.email_verified ? "Yes" : "No"}</td>
                             <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{u.user_id}</td>
+                            <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">
+                              <button
+                                onClick={() => handleDeleteUser(u.user_id)}
+                                disabled={isDeletingUser === u.user_id}
+                                className={`text-red-600 hover:text-red-800 ${isDeletingUser === u.user_id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                              >
+                                {isDeletingUser === u.user_id ? 'Deleting...' : 'Delete'}
+                              </button>
+                            </td>
                           </tr>
                         ))
                       )}
