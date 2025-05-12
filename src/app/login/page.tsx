@@ -3,20 +3,11 @@ export const dynamic = "force-dynamic";
 
 import { Suspense } from 'react';
 import { useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 function LoginPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const returnTo = searchParams.get('returnTo');
-
   useEffect(() => {
-    // Redirect to Auth0 login with returnTo parameter if present
-    const loginUrl = returnTo 
-      ? `/api/auth/login?returnTo=${encodeURIComponent(returnTo)}`
-      : '/api/auth/login';
-    window.location.href = loginUrl;
-  }, [returnTo]);
+    window.location.href = '/api/auth/login?returnTo=%2Fadmin';
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

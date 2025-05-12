@@ -78,7 +78,7 @@ const Navbar = () => {
                 </a>
               ) : (
                 <Link
-                  href="/login"
+                  href="/login?returnTo=/admin"
                   className="text-gray-400 hover:text-gray-600 text-sm transition-colors"
                 >
                   Login
@@ -144,7 +144,7 @@ const Navbar = () => {
               </a>
             ) : (
               <Link
-                href="/login"
+                href="/login?returnTo=/admin"
                 className="block px-3 py-2 text-gray-600 hover:text-gray-900"
                 onClick={() => setIsOpen(false)}
               >

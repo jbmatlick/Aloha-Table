@@ -144,11 +144,11 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         user_id: createdUser.user_id,
-        result_url: `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/admin`,
+        result_url: `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/admin?returnTo=/admin`,
       }),
     });
     const ticketData = await ticketRes.json();
-    const resetLink = ticketData.ticket;
+    const resetLink = ticketData.ticket + '?returnTo=/admin';
 
     // Send welcome email via Brevo with reset link
     const html = `
