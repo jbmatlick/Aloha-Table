@@ -167,7 +167,7 @@ export async function POST(req: Request) {
             email: 'hello@salt-and-serenity.com'
           },
           to: [{ email }],
-          subject: 'Welcome to Salt & Serenity Admin',
+          subject: 'Welcome to admin access to Salt and Serenity',
           htmlContent: html,
         }),
       });
