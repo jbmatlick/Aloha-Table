@@ -139,17 +139,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to assign admin role', details: assignRoleErr }, { status: 500 });
     }
 
-    // Send welcome email via Brevo
-    const loginUrl = `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/api/auth/login`;
+    // Generate Auth0 password reset ticket
+    const ticketRes = await fetch(`https://${domain}/api/v2/tickets/password-change`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${mgmtToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: createdUser.user_id,
+        result_url: `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/admin`,
+      }),
+    });
+    const ticketData = await ticketRes.json();
+    const resetLink = ticketData.ticket;
+
+    // Send welcome email via Brevo with reset link
     const html = `
       <div style="font-family: sans-serif;">
         <h2>Welcome to Salt & Serenity Admin</h2>
         <p>Hi${createdUser.name ? ' ' + createdUser.name : ''},</p>
         <p>You've been invited to the Salt & Serenity Admin Center.</p>
-        <p><b>Login:</b> ${email}<br/>
-        <b>Temporary Password:</b> ${tempPassword}</p>
-        <p><a href="${loginUrl}" style="color: #10b981;">Login here</a></p>
-        <p>After logging in, you'll be asked to reset your password.</p>
+        <p><a href="${resetLink}" style="color: #10b981;">Set your password and activate your account</a></p>
+        <p>After setting your password, you'll be able to log in.</p>
         <p>Welcome aboard!<br/>– Salt & Serenity</p>
       </div>
     `;
@@ -186,12 +198,11 @@ export async function POST(req: Request) {
       return NextResponse.json({
         success: true,
         user: createdUser,
-        password: tempPassword,
         emailWarning: 'User created, but failed to send welcome email. Please send credentials manually.'
       });
     }
 
-    return NextResponse.json({ success: true, user: createdUser, password: tempPassword });
+    return NextResponse.json({ success: true, user: createdUser });
   } catch (err) {
     console.error('Error creating user and assigning admin role:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
