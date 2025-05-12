@@ -8,6 +8,13 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 
 const Navbar = () => {
   const { user, error, isLoading } = useUser();
+  console.log('[Navbar] user:', user);
+  console.log('[Navbar] error:', error);
+  console.log('[Navbar] isLoading:', isLoading);
+  if (typeof window !== 'undefined') {
+    console.log('[Navbar] window.location.href:', window.location.href);
+    console.log('[Navbar] cookies:', document.cookie);
+  }
   const [isOpen, setIsOpen] = React.useState(false);
 
   const navItems = [
