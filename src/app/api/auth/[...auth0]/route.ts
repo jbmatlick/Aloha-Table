@@ -6,5 +6,5 @@ const handler = handleAuth();
 
 console.log('Auth0 handler created successfully');
 
-export const GET = handler;
-export const POST = handler; 
+export const GET = handleAuth();
+export const POST = handleAuth(); 
