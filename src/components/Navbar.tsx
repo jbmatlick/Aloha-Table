@@ -29,71 +29,85 @@ const Navbar = () => {
     console.error('Auth0 user error:', error);
   }
 
-  return (
-    <nav className="fixed w-full z-50 bg-white/90 backdrop-blur-sm shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link href="/" className="text-2xl font-serif text-island-green">
-              Salt and Serenity
-            </Link>
-          </div>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-gray-600 hover:text-island-green transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
-            {isLoading ? (
-              <span className="text-gray-600">Loading...</span>
-            ) : user ? (
-              <a
-                href="/api/auth/logout"
-                className="text-gray-400 hover:text-gray-600 text-sm transition-colors"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.href = '/api/auth/logout';
-                }}
-              >
-                Logout
-              </a>
-            ) : (
-              <Link
-                href="/login"
-                className="text-gray-400 hover:text-gray-600 text-sm transition-colors"
-              >
-                Login
-              </Link>
-            )}
-            <Link
-              href="/contact"
-              className="bg-island-green text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors"
-            >
-              Get in Touch
-            </Link>
-          </div>
+  // Admin/session bar for logged-in users
+  const sessionBar = user ? (
+    <div style={{ width: '100%', background: '#111', color: '#fff', padding: '6px 0', textAlign: 'center', position: 'fixed', top: 0, left: 0, zIndex: 100 }}>
+      <span style={{ marginRight: 16 }}>Logged in as <b>{user.email}</b></span>
+      <a href="/admin" style={{ color: '#10b981', textDecoration: 'underline', marginRight: 16 }}>Admin Dashboard</a>
+      <a href="/api/auth/logout" style={{ color: '#fff', textDecoration: 'underline' }}>Logout</a>
+    </div>
+  ) : null;
 
-          {/* Mobile Navigation Button */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              {isOpen ? (
-                <XMarkIcon className="h-6 w-6" />
+  return (
+    <>
+      {sessionBar}
+      {/* Offset for the session bar */}
+      <div style={{ height: user ? 38 : 0 }} />
+      <nav className="fixed w-full z-50 bg-white/90 backdrop-blur-sm shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <Link href="/" className="text-2xl font-serif text-island-green">
+                Salt and Serenity
+              </Link>
+            </div>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="text-gray-600 hover:text-island-green transition-colors"
+                >
+                  {item.name}
+                </Link>
+              ))}
+              {isLoading ? (
+                <span className="text-gray-600">Loading...</span>
+              ) : user ? (
+                <a
+                  href="/api/auth/logout"
+                  className="text-gray-400 hover:text-gray-600 text-sm transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = '/api/auth/logout';
+                  }}
+                >
+                  Logout
+                </a>
               ) : (
-                <Bars3Icon className="h-6 w-6" />
+                <Link
+                  href="/login"
+                  className="text-gray-400 hover:text-gray-600 text-sm transition-colors"
+                >
+                  Login
+                </Link>
               )}
-            </button>
+              <Link
+                href="/contact"
+                className="bg-island-green text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors"
+              >
+                Get in Touch
+              </Link>
+            </div>
+
+            {/* Mobile Navigation Button */}
+            <div className="md:hidden flex items-center">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                {isOpen ? (
+                  <XMarkIcon className="h-6 w-6" />
+                ) : (
+                  <Bars3Icon className="h-6 w-6" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </nav>
 
       {/* Mobile Navigation Menu */}
       {isOpen && (
@@ -147,7 +161,7 @@ const Navbar = () => {
           </div>
         </motion.div>
       )}
-    </nav>
+    </>
   );
 };
 
