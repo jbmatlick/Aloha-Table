@@ -27,12 +27,7 @@ export const auth0Config = {
   clientSecret: process.env.AUTH0_CLIENT_SECRET,
   issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
   baseURL: process.env.AUTH0_BASE_URL,
-  secret: process.env.AUTH0_SECRET,
-  session: {
-    rollingDuration: 60 * 15, // 15 minutes
-    absoluteDuration: 60 * 60, // 1 hour
-    autoSave: true,
-  }
+  secret: process.env.AUTH0_SECRET
 };
 
 console.log('Auth0 configuration initialized with settings:', {
@@ -40,6 +35,5 @@ console.log('Auth0 configuration initialized with settings:', {
   clientSecret: 'SET',
   issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
   baseURL: process.env.AUTH0_BASE_URL,
-  secret: 'SET',
-  session: auth0Config.session
+  secret: 'SET'
 }); 
