@@ -57,16 +57,12 @@ const Navbar = () => {
                 Logout
               </a>
             ) : (
-              <a
-                href="/api/auth/login"
+              <Link
+                href="/login"
                 className="text-gray-400 hover:text-gray-600 text-sm transition-colors"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.href = '/api/auth/login';
-                }}
               >
                 Login
-              </a>
+              </Link>
             )}
             <Link
               href="/contact"
@@ -126,17 +122,13 @@ const Navbar = () => {
                 Logout
               </a>
             ) : (
-              <a
-                href="/api/auth/login"
+              <Link
+                href="/login"
                 className="block px-3 py-2 text-gray-600 hover:text-gray-900"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.href = '/api/auth/login';
-                  setIsOpen(false);
-                }}
+                onClick={() => setIsOpen(false)}
               >
                 Login
-              </a>
+              </Link>
             )}
             <Link
               href="/contact"

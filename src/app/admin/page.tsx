@@ -59,7 +59,7 @@ export default function Admin() {
   // Auth protection
   useEffect(() => {
     if (!isLoadingUser && !user) {
-      router.push("/api/auth/login?returnTo=/admin");
+      router.push("/login?returnTo=/admin");
     }
   }, [user, isLoadingUser, router]);
 
