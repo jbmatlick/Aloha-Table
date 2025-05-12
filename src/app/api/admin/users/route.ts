@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { Resend } from 'resend';
 
 export async function GET() {
   const domain = process.env.AUTH0_DOMAIN;
@@ -54,10 +53,9 @@ export async function POST(req: Request) {
   const clientId = process.env.AUTH0_MGMT_CLIENT_ID;
   const clientSecret = process.env.AUTH0_MGMT_CLIENT_SECRET;
   const audience = process.env.AUTH0_MGMT_AUDIENCE;
-  const resendApiKey = process.env.RESEND_API_KEY;
 
-  if (!domain || !clientId || !clientSecret || !audience || !resendApiKey) {
-    console.error('Missing Auth0 Management API or Resend environment variables');
+  if (!domain || !clientId || !clientSecret || !audience) {
+    console.error('Missing Auth0 Management API environment variables');
     return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
   }
 
@@ -141,8 +139,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to assign admin role', details: assignRoleErr }, { status: 500 });
     }
 
-    // Send welcome email via Resend
-    const resend = new Resend(resendApiKey);
+    // Send welcome email via Brevo
     const loginUrl = `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/api/auth/login`;
     const html = `
       <div style="font-family: sans-serif;">
@@ -157,12 +154,32 @@ export async function POST(req: Request) {
       </div>
     `;
     try {
-      await resend.emails.send({
-        from: 'Salt & Serenity <noreply@salt-and-serenity.com>',
-        to: email,
-        subject: 'Welcome to Salt & Serenity Admin',
-        html,
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': process.env.BREVO_API_KEY,
+        },
+        body: JSON.stringify({
+          sender: {
+            name: 'Salt & Serenity',
+            email: 'hello@salt-and-serenity.com'
+          },
+          to: [{ email }],
+          subject: 'Welcome to Salt & Serenity Admin',
+          htmlContent: html,
+        }),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Brevo API error details:', error);
+        throw new Error(`Failed to send email: ${error.message || 'Unknown error'}`);
+      }
+
+      const emailData = await response.json();
+      console.log('Welcome email sent successfully:', emailData);
     } catch (emailErr) {
       console.error('Failed to send welcome email:', emailErr);
       // Continue, but include a warning in the response
@@ -178,5 +195,80 @@ export async function POST(req: Request) {
   } catch (err) {
     console.error('Error creating user and assigning admin role:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const body = await req.json();
+    console.log('[DELETE] Incoming request body:', body);
+    const userId = body.user_id;
+    if (!userId || typeof userId !== 'string') {
+      console.error('[DELETE] Invalid user_id:', userId);
+      return NextResponse.json({ error: 'Invalid user_id' }, { status: 400 });
+    }
+    console.log('[DELETE] Attempting to delete user with user_id:', userId);
+
+    const domain = process.env.AUTH0_DOMAIN;
+    const clientId = process.env.AUTH0_MGMT_CLIENT_ID;
+    const clientSecret = process.env.AUTH0_MGMT_CLIENT_SECRET;
+    const audience = process.env.AUTH0_MGMT_AUDIENCE;
+
+    if (!domain || !clientId || !clientSecret || !audience) {
+      console.error('[DELETE] Missing Auth0 Management API environment variables');
+      return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
+    }
+
+    // Get a Management API token
+    const tokenRes = await fetch(`https://${domain}/oauth/token`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        grant_type: 'client_credentials',
+        client_id: clientId,
+        client_secret: clientSecret,
+        audience,
+      }),
+    });
+    const tokenData = await tokenRes.json();
+    if (!tokenRes.ok) {
+      console.error('[DELETE] Failed to get Auth0 Management token:', tokenData);
+      return NextResponse.json({ error: 'Failed to get Auth0 Management token' }, { status: 500 });
+    }
+    const mgmtToken = tokenData.access_token;
+
+    // Fetch all users to check count
+    const usersRes = await fetch(`https://${domain}/api/v2/users`, {
+      headers: {
+        Authorization: `Bearer ${mgmtToken}`,
+      },
+    });
+    const users = await usersRes.json();
+    if (!usersRes.ok) {
+      console.error('Failed to fetch users:', users);
+      return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+    }
+    if (users.length <= 1) {
+      return NextResponse.json({ error: 'Cannot delete the last user.' }, { status: 400 });
+    }
+
+    // Delete the user
+    const deleteRes = await fetch(`https://${domain}/api/v2/users/${encodeURIComponent(userId)}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${mgmtToken}`,
+      },
+    });
+    console.log('[DELETE] Auth0 delete user response status:', deleteRes.status);
+    if (!deleteRes.ok) {
+      const deleteErr = await deleteRes.json();
+      console.error('[DELETE] Failed to delete user:', deleteErr);
+      return NextResponse.json({ error: 'Failed to delete user', details: deleteErr }, { status: 500 });
+    }
+    console.log('[DELETE] User deleted successfully:', userId);
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('[DELETE] Unexpected error:', err);
+    return NextResponse.json({ error: 'Internal server error', details: err instanceof Error ? err.message : String(err) }, { status: 500 });
   }
 } 
