@@ -30,10 +30,15 @@ cd island-table
 npm install
 ```
 
-3. Create a `.env.local` file in the root directory and add any necessary environment variables:
-```bash
-NEXT_PUBLIC_CONTACT_EMAIL=your-email@example.com
-```
+3. Set up environment variables:
+   - Copy `env.example` to `.env.local`
+   - Fill in the required environment variables:
+     - Auth0 configuration for authentication
+     - Airtable configuration for database
+     - Brevo API key for email sending
+     - Resend API key for additional email functionality
+     - Pexels API key for image generation
+     - Public URL configuration
 
 4. Start the development server:
 ```bash
@@ -62,6 +67,11 @@ src/
 - Tailwind CSS
 - Framer Motion
 - React
+- Auth0 for authentication
+- Airtable for database
+- Brevo for email services
+- Resend for additional email functionality
+- Pexels for image generation
 
 ## Contributing
 
