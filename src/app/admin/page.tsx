@@ -37,7 +37,12 @@ interface Auth0User {
 }
 
 export default function Admin() {
-  const [tab, setTab] = useState<"dashboard" | "users">("dashboard");
+  const [tab, setTab] = useState<"dashboard" | "users">(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('adminTab') as "dashboard" | "users") || "dashboard";
+    }
+    return "dashboard";
+  });
   const [records, setRecords] = useState<ContactRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,6 +58,7 @@ export default function Admin() {
   const [showedEmail, setShowedEmail] = useState<string | null>(null);
   const [invitePassword, setInvitePassword] = useState("");
   const [isDeletingUser, setIsDeletingUser] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const router = useRouter();
   const { user, error, isLoading: isLoadingUser } = useUser();
 
@@ -62,6 +68,13 @@ export default function Admin() {
       router.push("/login?returnTo=/admin");
     }
   }, [user, isLoadingUser, router]);
+
+  // Persist tab selection
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('adminTab', tab);
+    }
+  }, [tab]);
 
   // Fetch leads and referrers
   useEffect(() => {
@@ -176,11 +189,8 @@ export default function Admin() {
         setInviteStatus({ type: "error", message: (data.error || "Failed to delete user") + (data.details ? `: ${JSON.stringify(data.details)}` : "") });
         console.error("Delete error:", data);
       } else {
-        setInviteStatus({ type: "success", message: "User deleted successfully" });
-        // Refresh users
-        fetch("/api/admin/users")
-          .then((res) => res.json())
-          .then((data) => setUsers(data.users || []));
+        setSuccessMessage("User deleted successfully!");
+        setUsers((prev) => prev.filter((u) => u.user_id !== userId));
       }
     } catch (err) {
       setInviteStatus({ type: "error", message: "Network error: " + (err instanceof Error ? err.message : String(err)) });
@@ -223,6 +233,17 @@ export default function Admin() {
   return (
     <>
       <Navbar />
+      {successMessage && (
+        <div className="fixed top-0 left-0 w-full bg-emerald-600 text-white text-center py-2 z-50">
+          {successMessage}
+          <button
+            className="ml-4 px-2 py-1 bg-white text-emerald-600 rounded text-xs"
+            onClick={() => setSuccessMessage(null)}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       <main className="min-h-screen pt-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
           <motion.h1
