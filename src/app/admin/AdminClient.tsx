@@ -148,7 +148,7 @@ function Admin() {
       const res = await fetch("/api/admin/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: inviteEmail, password: invitePassword || undefined }),
+        body: JSON.stringify({ email: inviteEmail }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -156,14 +156,8 @@ function Admin() {
         console.error("Invite error:", data);
       } else {
         setInviteStatus({ type: "success", message: `User invited: ${inviteEmail}` });
-        setShowedPassword(data.password);
         setShowedEmail(inviteEmail);
         setInviteEmail("");
-        setInvitePassword("");
-        // Refresh users
-        fetch("/api/admin/users")
-          .then((res) => res.json())
-          .then((data) => setUsers(data.users || []));
       }
     } catch (err) {
       setInviteStatus({ type: "error", message: "Network error: " + (err instanceof Error ? err.message : String(err)) });
@@ -397,13 +391,6 @@ function Admin() {
                     placeholder="Invite user by email"
                     className="border border-gray-300 rounded-md px-4 py-2 focus:ring-emerald-500 focus:border-emerald-500 w-full sm:w-auto"
                   />
-                  <input
-                    type="text"
-                    value={invitePassword}
-                    onChange={(e) => setInvitePassword(e.target.value)}
-                    placeholder="Temporary password (optional)"
-                    className="border border-gray-300 rounded-md px-4 py-2 focus:ring-emerald-500 focus:border-emerald-500 w-full sm:w-auto"
-                  />
                   <button
                     type="submit"
                     className="bg-emerald-600 text-white px-6 py-2 rounded-md hover:bg-emerald-700 transition-colors"
@@ -411,25 +398,14 @@ function Admin() {
                     Invite
                   </button>
                 </form>
-                {showedPassword && showedEmail && (
-                  <div className="mb-4 p-4 bg-yellow-50 border border-yellow-300 rounded text-yellow-900">
-                    <div className="mb-2 font-semibold">User created!</div>
+                {showedEmail && (
+                  <div className="mb-4 p-4 bg-emerald-50 border border-emerald-300 rounded text-emerald-900">
+                    <div className="mb-2 font-semibold">User invited!</div>
                     <div className="mb-2 flex items-center gap-2">
                       <span className="font-mono">Email:</span>
                       <span className="font-mono">{showedEmail}</span>
                     </div>
-                    <div className="mb-2 flex items-center gap-2">
-                      <span className="font-mono">Password:</span>
-                      <span className="font-mono">{showedPassword}</span>
-                      <button
-                        type="button"
-                        className="ml-2 px-2 py-1 bg-gray-200 rounded text-xs hover:bg-gray-300"
-                        onClick={() => navigator.clipboard.writeText(showedPassword)}
-                      >
-                        Copy
-                      </button>
-                    </div>
-                    <div className="text-xs text-yellow-700">This password will not be shown again. Please share it securely.</div>
+                    <div className="text-sm text-emerald-700">A password reset link has been sent to their email.</div>
                   </div>
                 )}
                 {inviteStatus && (

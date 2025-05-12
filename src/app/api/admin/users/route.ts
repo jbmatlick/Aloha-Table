@@ -148,7 +148,11 @@ export async function POST(req: Request) {
       }),
     });
     const ticketData = await ticketRes.json();
-    const resetLink = ticketData.ticket + '?returnTo=/admin';
+    if (!ticketRes.ok) {
+      console.error('Failed to generate password reset ticket:', ticketData);
+      return NextResponse.json({ error: 'Failed to generate password reset ticket', details: ticketData }, { status: 500 });
+    }
+    const resetLink = ticketData.ticket;
 
     // Send welcome email via Brevo with reset link
     const html = `
