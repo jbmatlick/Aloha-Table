@@ -95,6 +95,7 @@ export async function POST(req: Request) {
         connection: 'Username-Password-Authentication',
         email_verified: false,
         verify_email: false,
+        password: crypto.randomUUID() + 'Aa1!', // Temporary strong password to satisfy Auth0
       }),
     });
     const createdUser = await createUserRes.json();
