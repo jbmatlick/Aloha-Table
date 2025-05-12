@@ -135,27 +135,70 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to assign admin role', details: assignRoleErr }, { status: 500 });
     }
 
-    // Trigger Auth0 password reset email
-    const changePasswordRes = await fetch(`https://${domain}/dbconnections/change_password`, {
+    // Generate Auth0 password reset ticket
+    const ticketRes = await fetch(`https://${domain}/api/v2/tickets/password-change`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: {
+        Authorization: `Bearer ${mgmtToken}`,
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
-        client_id: process.env.AUTH0_CLIENT_ID,
-        email,
-        connection: 'Username-Password-Authentication',
+        user_id: createdUser.user_id,
+        result_url: `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/admin`,
       }),
     });
-    const changePasswordData = await changePasswordRes.text();
-    if (!changePasswordRes.ok) {
-      console.error('Failed to trigger password reset email:', changePasswordData);
-      return NextResponse.json({ error: 'Failed to trigger password reset email', details: changePasswordData }, { status: 500 });
+    const ticketData = await ticketRes.json();
+    const resetLink = ticketData.ticket;
+
+    // Send welcome email via Brevo with reset link
+    const html = `
+      <div style="font-family: sans-serif;">
+        <h2>Welcome to Salt & Serenity Admin</h2>
+        <p>Hi${createdUser.name ? ' ' + createdUser.name : ''},</p>
+        <p>You've been invited to the Salt & Serenity Admin Center.</p>
+        <p><a href="${resetLink}" style="color: #10b981;">Set your password and activate your account</a></p>
+        <p>After setting your password, you'll be able to log in.</p>
+        <p>Welcome aboard!<br/>– Salt & Serenity</p>
+      </div>
+    `;
+    try {
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'api-key': process.env.BREVO_API_KEY || '',
+        },
+        body: JSON.stringify({
+          sender: {
+            name: 'Salt & Serenity',
+            email: 'hello@salt-and-serenity.com'
+          },
+          to: [{ email }],
+          subject: 'Welcome to admin access to Salt and Serenity',
+          htmlContent: html,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Brevo API error details:', error);
+        throw new Error(`Failed to send email: ${error.message || 'Unknown error'}`);
+      }
+
+      const emailData = await response.json();
+      console.log('Welcome email sent successfully:', emailData);
+    } catch (emailErr) {
+      console.error('Failed to send welcome email:', emailErr);
+      // Continue, but include a warning in the response
+      return NextResponse.json({
+        success: true,
+        user: createdUser,
+        emailWarning: 'User created, but failed to send welcome email. Please send credentials manually.'
+      });
     }
 
-    return NextResponse.json({
-      success: true,
-      user: createdUser,
-      message: 'User created and password reset email sent. The user should use the reset link to log in for the first time.'
-    });
+    return NextResponse.json({ success: true, user: createdUser });
   } catch (err) {
     console.error('Error creating user and assigning admin role:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
