@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Navbar from "../../components/Navbar";
 import { useUser } from "@auth0/nextjs-auth0/client";
@@ -38,10 +38,10 @@ interface Auth0User {
 
 export default function Admin() {
   const [tab, setTab] = useState<"dashboard" | "users">(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('adminTab') as "dashboard" | "users") || "dashboard";
-    }
-    return "dashboard";
+    const searchParams = useSearchParams();
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'users') return 'users';
+    return 'dashboard';
   });
   const [records, setRecords] = useState<ContactRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,6 +60,7 @@ export default function Admin() {
   const [isDeletingUser, setIsDeletingUser] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, error, isLoading: isLoadingUser } = useUser();
 
   // Auth protection
@@ -69,12 +70,11 @@ export default function Admin() {
     }
   }, [user, isLoadingUser, router]);
 
-  // Persist tab selection
+  // When tab changes, update the URL
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('adminTab', tab);
-    }
-  }, [tab]);
+    const url = `/admin?tab=${tab}`;
+    router.replace(url);
+  }, [tab, router]);
 
   // Fetch leads and referrers
   useEffect(() => {

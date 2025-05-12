@@ -60,13 +60,10 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { email, password } = await req.json();
+    const { email } = await req.json();
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
-
-    // Generate a secure random password if not provided
-    const tempPassword = password || Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-4);
 
     // Get a Management API token
     const tokenRes = await fetch(`https://${domain}/oauth/token`, {
@@ -86,7 +83,7 @@ export async function POST(req: Request) {
     }
     const mgmtToken = tokenData.access_token;
 
-    // Create user
+    // Create user (no password)
     const createUserRes = await fetch(`https://${domain}/api/v2/users`, {
       method: 'POST',
       headers: {
@@ -95,7 +92,6 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         email,
-        password: tempPassword,
         connection: 'Username-Password-Authentication',
         email_verified: false,
         verify_email: false,
@@ -139,59 +135,27 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Failed to assign admin role', details: assignRoleErr }, { status: 500 });
     }
 
-    // Send welcome email via Brevo
-    const loginUrl = `${process.env.AUTH0_BASE_URL || 'http://localhost:3000'}/login?returnTo=/admin`;
-    const html = `
-      <div style="font-family: sans-serif;">
-        <h2>Welcome to Salt & Serenity Admin</h2>
-        <p>Hi${createdUser.name ? ' ' + createdUser.name : ''},</p>
-        <p>You've been invited to the Salt & Serenity Admin Center.</p>
-        <p><b>Login:</b> ${email}<br/>
-        <b>Temporary Password:</b> ${tempPassword}</p>
-        <p><a href="${loginUrl}" style="color: #10b981;">Login here</a></p>
-        <p>After logging in, you'll be asked to reset your password.</p>
-        <p>Welcome aboard!<br/>– Salt & Serenity</p>
-      </div>
-    `;
-    try {
-      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'api-key': process.env.BREVO_API_KEY || '',
-        },
-        body: JSON.stringify({
-          sender: {
-            name: 'Salt & Serenity',
-            email: 'hello@salt-and-serenity.com'
-          },
-          to: [{ email }],
-          subject: 'Welcome to admin access to Salt and Serenity',
-          htmlContent: html,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        console.error('Brevo API error details:', error);
-        throw new Error(`Failed to send email: ${error.message || 'Unknown error'}`);
-      }
-
-      const emailData = await response.json();
-      console.log('Welcome email sent successfully:', emailData);
-    } catch (emailErr) {
-      console.error('Failed to send welcome email:', emailErr);
-      // Continue, but include a warning in the response
-      return NextResponse.json({
-        success: true,
-        user: createdUser,
-        password: tempPassword,
-        emailWarning: 'User created, but failed to send welcome email. Please send credentials manually.'
-      });
+    // Trigger Auth0 password reset email
+    const changePasswordRes = await fetch(`https://${domain}/dbconnections/change_password`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        client_id: process.env.AUTH0_CLIENT_ID,
+        email,
+        connection: 'Username-Password-Authentication',
+      }),
+    });
+    const changePasswordData = await changePasswordRes.text();
+    if (!changePasswordRes.ok) {
+      console.error('Failed to trigger password reset email:', changePasswordData);
+      return NextResponse.json({ error: 'Failed to trigger password reset email', details: changePasswordData }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, user: createdUser, password: tempPassword });
+    return NextResponse.json({
+      success: true,
+      user: createdUser,
+      message: 'User created and password reset email sent. The user should use the reset link to log in for the first time.'
+    });
   } catch (err) {
     console.error('Error creating user and assigning admin role:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
