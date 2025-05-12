@@ -9,7 +9,7 @@ export default function ResetComplete() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push('/login?returnTo=/admin');
+      router.push('/login?returnTo=/admin&prompt=login');
     }, 3000);
 
     return () => clearTimeout(timer);
