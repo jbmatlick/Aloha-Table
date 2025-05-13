@@ -31,7 +31,7 @@ export async function GET() {
     const mgmtToken = tokenData.access_token;
 
     // Fetch users
-    const usersRes = await fetch(`https://${domain}/api/v2/users`, {
+    const usersRes = await fetch(`https://${domain}/api/v2/users?fields=user_id,email,name,email_verified,last_login`, {
       headers: {
         Authorization: `Bearer ${mgmtToken}`,
       },

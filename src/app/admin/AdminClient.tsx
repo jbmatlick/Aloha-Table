@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Navbar from "../../components/Navbar";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import dynamic from 'next/dynamic';
+import { ErrorBoundary } from 'react-error-boundary';
 
 interface ContactRecord {
   id: string;
@@ -51,6 +53,29 @@ function formatLastLogin(lastLogin: string | undefined): string {
   }) + ' UTC';
 }
 
+const DashboardTab = dynamic(() => import('./components/DashboardTab'), {
+  loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading dashboard...</div>
+});
+
+const UsersTab = dynamic(() => import('./components/UsersTab'), {
+  loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading users...</div>
+});
+
+function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
+  return (
+    <div className="p-6 bg-red-50 border border-red-200 rounded-lg" role="alert">
+      <h2 className="text-lg font-semibold text-red-800 mb-2">Something went wrong</h2>
+      <pre className="text-sm text-red-600 mb-4">{error.message}</pre>
+      <button
+        onClick={resetErrorBoundary}
+        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+      >
+        Try again
+      </button>
+    </div>
+  );
+}
+
 function Admin() {
   const [tab, setTab] = useState<"dashboard" | "users">(() => {
     const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
@@ -90,44 +115,42 @@ function Admin() {
     router.replace(url);
   }, [tab, router]);
 
-  // Fetch leads and referrers
+  // Prefetch data for both tabs
   useEffect(() => {
     if (!isLoadingUser && user) {
-      // Leads
-      const fetchRecords = async () => {
+      // Prefetch both records and referrers data
+      const prefetchData = async () => {
         try {
-          const response = await fetch(`/api/admin/records?page=${currentPage}`);
-          if (!response.ok) throw new Error("Failed to fetch records");
-          const data = await response.json();
-          setRecords(data.records);
-          setTotalPages(Math.ceil(data.total / 50));
+          const [recordsRes, referrersRes] = await Promise.all([
+            fetch(`/api/admin/records?page=${currentPage}`),
+            fetch("/api/admin/referrers")
+          ]);
+
+          if (recordsRes.ok) {
+            const data = await recordsRes.json();
+            setRecords(data.records);
+            setTotalPages(Math.ceil(data.total / 50));
+          }
+
+          if (referrersRes.ok) {
+            const data = await referrersRes.json();
+            setReferrers(data.referrers);
+          }
         } catch (error) {
-          console.error("Error fetching records:", error);
+          console.error("Error prefetching data:", error);
         } finally {
           setIsLoading(false);
-        }
-      };
-      fetchRecords();
-      // Referrers
-      const fetchReferrers = async () => {
-        try {
-          const response = await fetch("/api/admin/referrers");
-          if (!response.ok) throw new Error("Failed to fetch referrers");
-          const data = await response.json();
-          setReferrers(data.referrers);
-        } catch (error) {
-          console.error("Error fetching referrers:", error);
-        } finally {
           setIsLoadingReferrers(false);
         }
       };
-      fetchReferrers();
-    }
-  }, [router, currentPage, user, isLoadingUser]);
 
-  // Fetch Auth0 users
+      prefetchData();
+    }
+  }, [user, isLoadingUser, currentPage]);
+
+  // Fetch Auth0 users only when users tab is active
   useEffect(() => {
-    if (tab === "users" && user) {
+    if (tab === "users" && user && !users.length) {
       setIsLoadingUsers(true);
       setUsersError(null);
       fetch("/api/admin/users")
@@ -146,7 +169,7 @@ function Admin() {
         })
         .finally(() => setIsLoadingUsers(false));
     }
-  }, [tab, user]);
+  }, [tab, user, users.length]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
