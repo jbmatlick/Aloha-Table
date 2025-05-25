@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     const base = airtable.base(process.env.AIRTABLE_BASE_ID);
     const tableName = 'Events';
 
-    // Get the leadId from query params if provided
+    // Get the leadId from query params if providedd
     const { searchParams } = new URL(request.url);
     const leadId = searchParams.get('leadId');
 
