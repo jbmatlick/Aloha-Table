@@ -53,6 +53,7 @@ const LeadsTable = memo(function LeadsTable({
 
   return (
     <>
+      <h1 style={{ color: 'red', fontWeight: 'bold', fontSize: 24, textAlign: 'center' }}>🔥 THIS IS THE NEW VERSION 🔥</h1>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200" role="grid">
           <thead className="bg-gray-50">
