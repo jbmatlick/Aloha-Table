@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 import useSWR from 'swr';
 import dynamic from 'next/dynamic';
 
-const LeadsTable = dynamic(() => import('./LeadsTable'), {
+// @ts-expect-error: force query string is for cache busting, not a real module
+const LeadsTable = dynamic(() => import('./LeadsTable?force=123'), {
   loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading leads...</div>
-});
+}) as any;
 
 const ReferrersTable = dynamic(() => import('./ReferrersTable'), {
   loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading referrers...</div>
