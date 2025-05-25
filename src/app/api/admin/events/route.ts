@@ -32,13 +32,9 @@ export async function GET(request: Request) {
 
     // Build the query
     let query = base(tableName).select({
-      sort: [{ field: 'Date of Event', direction: 'desc' }]
+      sort: [{ field: 'Date of Event', direction: 'desc' }],
+      filterByFormula: leadId ? `{Lead} = '${leadId}'` : undefined
     });
-
-    // If leadId is provided, filter by that lead
-    if (leadId) {
-      query = query.filterByFormula(`{Lead} = '${leadId}'`);
-    }
 
     const records = await query.all();
     const events = records.map(record => ({
