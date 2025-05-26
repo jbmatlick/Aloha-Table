@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       );
     }
 
-    if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID) {
+    if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID || !process.env.AIRTABLE_TABLE_NAME_EVENTS) {
       throw new Error('Airtable configuration is missing');
     }
 
@@ -24,9 +24,9 @@ export async function GET(request: Request) {
     });
 
     const base = airtable.base(process.env.AIRTABLE_BASE_ID);
-    const tableName = 'Events';
+    const tableName = process.env.AIRTABLE_TABLE_NAME_EVENTS;
 
-    // Get the leadId from query params if providedd
+    // Get the leadId from query params if provided
     const { searchParams } = new URL(request.url);
     const leadId = searchParams.get('leadId');
 
