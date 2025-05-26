@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.0.0",
+    "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.1.1",
     "@types/nodemailer": "^6.4.17",
     "airtable": "^0.12.2",

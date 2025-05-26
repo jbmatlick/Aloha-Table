@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, CalendarIcon, UserGroupIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { Listbox } from '@headlessui/react';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 interface CreateEventModalProps {
   isOpen: boolean;
@@ -15,12 +17,24 @@ const EVENT_TYPES = [
   "Catered",
   "Meal Plan",
   "Custom"
-];
+] as const;
 
-const EVENT_STATUSES = ["New", "Scheduled"];
+const EVENT_STATUSES = ["New", "Scheduled"] as const;
+
+type EventType = typeof EVENT_TYPES[number];
+type EventStatus = typeof EVENT_STATUSES[number];
+
+interface FormData {
+  typeOfEvent: EventType;
+  numberOfAdults: string;
+  numberOfChildren: string;
+  dateOfEvent: string;
+  status: EventStatus;
+  notes: string;
+}
 
 export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }: CreateEventModalProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     typeOfEvent: EVENT_TYPES[0],
     numberOfAdults: '',
     numberOfChildren: '',
@@ -80,7 +94,6 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
           status: response.status,
           statusText: response.statusText,
           data,
-          error: data.error,
           details: data.details
         });
         throw new Error(data.error || data.details || 'Failed to create event');
@@ -125,11 +138,11 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", duration: 0.5 }}
-              className="relative w-full max-w-lg transform overflow-hidden rounded-xl bg-white p-6 text-left align-middle shadow-lg"
+              className="relative w-full max-w-xl transform overflow-hidden rounded-2xl bg-white p-8 text-left align-middle shadow-xl"
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-semibold text-gray-900 font-inter">
+                <h3 className="text-2xl font-bold text-gray-900 font-inter">
                   Create New Event
                 </h3>
                 <button
@@ -143,27 +156,55 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Type of Event */}
                 <div>
-                  <label htmlFor="typeOfEvent" className="block text-sm font-medium text-gray-600 mb-1.5">
-                    Type of Event
-                  </label>
-                  <select
-                    id="typeOfEvent"
-                    value={formData.typeOfEvent}
-                    onChange={(e) => setFormData(prev => ({ ...prev, typeOfEvent: e.target.value }))}
-                    className="block w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors text-base"
-                    required
-                  >
-                    {EVENT_TYPES.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
+                  <Listbox value={formData.typeOfEvent} onChange={(value: EventType) => setFormData(prev => ({ ...prev, typeOfEvent: value }))}>
+                    <div className="relative">
+                      <Listbox.Label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        Type of Event
+                      </Listbox.Label>
+                      <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2.5 pl-3 pr-10 text-left border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <span className="block truncate">{formData.typeOfEvent}</span>
+                        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                          <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </span>
+                      </Listbox.Button>
+                      <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                        {EVENT_TYPES.map((type) => (
+                          <Listbox.Option
+                            key={type}
+                            value={type}
+                            className={({ active }: { active: boolean }) =>
+                              `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                active ? 'bg-blue-100 text-blue-900' : 'text-gray-900'
+                              }`
+                            }
+                          >
+                            {({ selected, active }: { selected: boolean; active: boolean }) => (
+                              <>
+                                <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                  {type}
+                                </span>
+                                {selected ? (
+                                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                                    <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                  </span>
+                                ) : null}
+                              </>
+                            )}
+                          </Listbox.Option>
+                        ))}
+                      </Listbox.Options>
+                    </div>
+                  </Listbox>
                 </div>
 
                 {/* Number of Guests */}
                 <div className="grid grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="numberOfAdults" className="block text-sm font-medium text-gray-600 mb-1.5">
-                      Number of Adults
+                    <label htmlFor="numberOfAdults" className="block text-sm font-medium text-gray-700 mb-1.5">
+                      <div className="flex items-center space-x-2">
+                        <UserGroupIcon className="h-4 w-4 text-gray-500" />
+                        <span>Number of Adults</span>
+                      </div>
                     </label>
                     <input
                       type="number"
@@ -171,12 +212,15 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
                       min="0"
                       value={formData.numberOfAdults}
                       onChange={(e) => setFormData(prev => ({ ...prev, numberOfAdults: e.target.value }))}
-                      className="block w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors text-base"
+                      className="block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base"
                     />
                   </div>
                   <div>
-                    <label htmlFor="numberOfChildren" className="block text-sm font-medium text-gray-600 mb-1.5">
-                      Number of Children
+                    <label htmlFor="numberOfChildren" className="block text-sm font-medium text-gray-700 mb-1.5">
+                      <div className="flex items-center space-x-2">
+                        <UserGroupIcon className="h-4 w-4 text-gray-500" />
+                        <span>Number of Children</span>
+                      </div>
                     </label>
                     <input
                       type="number"
@@ -184,54 +228,86 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
                       min="0"
                       value={formData.numberOfChildren}
                       onChange={(e) => setFormData(prev => ({ ...prev, numberOfChildren: e.target.value }))}
-                      className="block w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors text-base"
+                      className="block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base"
                     />
                   </div>
                 </div>
 
                 {/* Date of Event */}
                 <div>
-                  <label htmlFor="dateOfEvent" className="block text-sm font-medium text-gray-600 mb-1.5">
-                    Date of Event
+                  <label htmlFor="dateOfEvent" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <div className="flex items-center space-x-2">
+                      <CalendarIcon className="h-4 w-4 text-gray-500" />
+                      <span>Date of Event</span>
+                    </div>
                   </label>
                   <input
                     type="date"
                     id="dateOfEvent"
                     value={formData.dateOfEvent}
                     onChange={(e) => setFormData(prev => ({ ...prev, dateOfEvent: e.target.value }))}
-                    className="block w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors text-base"
+                    className="block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base"
                     required
                   />
                 </div>
 
                 {/* Status */}
                 <div>
-                  <label htmlFor="status" className="block text-sm font-medium text-gray-600 mb-1.5">
-                    Status
-                  </label>
-                  <select
-                    id="status"
-                    value={formData.status}
-                    onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
-                    className="block w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors text-base"
-                  >
-                    {EVENT_STATUSES.map(status => (
-                      <option key={status} value={status}>{status}</option>
-                    ))}
-                  </select>
+                  <Listbox value={formData.status} onChange={(value: EventStatus) => setFormData(prev => ({ ...prev, status: value }))}>
+                    <div className="relative">
+                      <Listbox.Label className="block text-sm font-medium text-gray-700 mb-1.5">
+                        Status
+                      </Listbox.Label>
+                      <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2.5 pl-3 pr-10 text-left border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <span className="block truncate">{formData.status}</span>
+                        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                          <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </span>
+                      </Listbox.Button>
+                      <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                        {EVENT_STATUSES.map((status) => (
+                          <Listbox.Option
+                            key={status}
+                            value={status}
+                            className={({ active }: { active: boolean }) =>
+                              `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                active ? 'bg-blue-100 text-blue-900' : 'text-gray-900'
+                              }`
+                            }
+                          >
+                            {({ selected, active }: { selected: boolean; active: boolean }) => (
+                              <>
+                                <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                  {status}
+                                </span>
+                                {selected ? (
+                                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                                    <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                  </span>
+                                ) : null}
+                              </>
+                            )}
+                          </Listbox.Option>
+                        ))}
+                      </Listbox.Options>
+                    </div>
+                  </Listbox>
                 </div>
 
                 {/* Notes */}
                 <div>
-                  <label htmlFor="notes" className="block text-sm font-medium text-gray-600 mb-1.5">
-                    Notes
+                  <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <div className="flex items-center space-x-2">
+                      <DocumentTextIcon className="h-4 w-4 text-gray-500" />
+                      <span>Notes</span>
+                    </div>
                   </label>
                   <textarea
                     id="notes"
                     rows={4}
                     value={formData.notes}
                     onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-                    className="block w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors text-base"
+                    className="block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base resize-none"
                     placeholder="Menu details and additional information..."
                   />
                 </div>
@@ -241,10 +317,11 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-sm text-red-600 bg-red-50 p-3 rounded-lg"
+                    className="flex items-center space-x-2 text-sm text-red-600 bg-red-50 p-3 rounded-lg"
                     role="alert"
                   >
-                    {error}
+                    <XMarkIcon className="h-5 w-5 flex-shrink-0" />
+                    <span>{error}</span>
                   </motion.div>
                 )}
 
