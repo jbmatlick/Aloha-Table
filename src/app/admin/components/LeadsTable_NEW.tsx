@@ -1,3 +1,5 @@
+// This is the new version of LeadsTable with all features
+// Including event creation and management capabilities
 import { memo, useState } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import CreateEventModal from './CreateEventModal';
