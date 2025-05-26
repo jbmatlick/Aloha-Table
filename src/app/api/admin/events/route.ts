@@ -348,6 +348,7 @@ export async function PATCH(request: Request) {
 
     const body = await request.json();
     const { id, ...fields } = body;
+    console.log('PATCH handler received fields:', fields);
     if (!id) {
       return NextResponse.json({ error: 'Event ID is required' }, { status: 400 });
     }
@@ -360,6 +361,7 @@ export async function PATCH(request: Request) {
     if (fields.dateOfEvent) updateFields['Event Date'] = new Date(fields.dateOfEvent).toISOString();
     if (fields.status) updateFields['Status'] = fields.status;
     if (fields.notes !== undefined) updateFields['Notes'] = fields.notes;
+    console.log('PATCH handler updateFields:', updateFields);
 
     try {
       const record = await table.update(id, updateFields);

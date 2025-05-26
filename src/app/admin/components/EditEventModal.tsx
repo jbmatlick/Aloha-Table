@@ -64,13 +64,16 @@ export default function EditEventModal({ isOpen, onClose, event, onSuccess }: Ed
     setError(null);
 
     const submitData = {
-      'Type of Event': formData.typeOfEvent,
-      '# of Adults': parseInt(formData.numberOfAdults) || 0,
-      '# of Children': parseInt(formData.numberOfChildren) || 0,
-      'Event Date': new Date(formData.dateOfEvent).toISOString(),
-      'Status': formData.status,
-      'Notes': formData.notes
+      id: event.id,
+      typeOfEvent: formData.typeOfEvent,
+      numberOfAdults: parseInt(formData.numberOfAdults) || 0,
+      numberOfChildren: parseInt(formData.numberOfChildren) || 0,
+      dateOfEvent: formData.dateOfEvent,
+      status: formData.status,
+      notes: formData.notes
     };
+
+    console.log('PATCH submitData:', submitData);
 
     try {
       const response = await fetch(`/api/admin/events/${event.id}`, {
