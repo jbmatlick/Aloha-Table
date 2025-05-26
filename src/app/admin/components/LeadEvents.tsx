@@ -36,7 +36,7 @@ export default function LeadEvents({ leadId }: LeadEventsProps) {
     );
   }
 
-  if (!data?.events.length) {
+  if (!data || !data.events || data.events.length === 0) {
     return null;
   }
 
