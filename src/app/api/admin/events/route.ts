@@ -43,13 +43,15 @@ export async function GET(request: Request) {
     const events = records.map(record => ({
       id: record.id,
       fields: {
+        'Title': record.get('Title') || '',
         'Type of Event': record.get('Type of Event') || '',
-        'Number of Adults': record.get('Number of Adults') || 0,
-        'Number of Children': record.get('Number of Children') || 0,
-        'Date of Event': record.get('Date of Event') || '',
+        '# of Adults': record.get('# of Adults') || 0,
+        '# of Children': record.get('# of Children') || 0,
+        'Event Date': record.get('Event Date') || '',
         'Status': record.get('Status') || 'New',
         'Notes': record.get('Notes') || '',
         'Lead': record.get('Lead') || [],
+        'Created At': record.get('Created At') || undefined,
       }
     }));
 

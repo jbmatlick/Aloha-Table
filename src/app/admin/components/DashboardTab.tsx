@@ -49,6 +49,7 @@ interface ReferrerRecord {
 interface EventRecord {
   id: string;
   fields: {
+    "Title": string;
     "Type of Event": string;
     "Event Date": string;
     "# of Adults": number;

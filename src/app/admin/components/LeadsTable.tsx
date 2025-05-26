@@ -106,7 +106,9 @@ const LeadsTable = memo(function LeadsTable({
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(record.fields["Created At"]).toLocaleDateString()}
+                  {record.fields["Created At"] && !isNaN(new Date(record.fields["Created At"]).getTime())
+                    ? new Date(record.fields["Created At"]).toLocaleDateString()
+                    : "—"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <button
