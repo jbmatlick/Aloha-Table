@@ -1,15 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon, CalendarIcon, UserGroupIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { Listbox } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-
-interface CreateEventModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  leadId: string;
-  onSuccess: () => void;
-}
 
 const EVENT_TYPES = [
   "Drinks and Appetizers",
@@ -33,7 +26,14 @@ interface FormData {
   notes: string;
 }
 
-export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }: CreateEventModalProps) {
+interface EditEventModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  event: any; // EventRecord
+  onSuccess: () => void;
+}
+
+export default function EditEventModal({ isOpen, onClose, event, onSuccess }: EditEventModalProps) {
   const [formData, setFormData] = useState<FormData>({
     typeOfEvent: EVENT_TYPES[0],
     numberOfAdults: '',
@@ -45,70 +45,47 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (event) {
+      setFormData({
+        typeOfEvent: (event.fields["Type of Event"] as EventType) || EVENT_TYPES[0],
+        numberOfAdults: event.fields["# of Adults"]?.toString() || '',
+        numberOfChildren: event.fields["# of Children"]?.toString() || '',
+        dateOfEvent: event.fields["Event Date"] ? event.fields["Event Date"].slice(0, 10) : '',
+        status: (event.fields["Status"] as EventStatus) || EVENT_STATUSES[0],
+        notes: event.fields["Notes"] || ''
+      });
+    }
+  }, [event]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
 
-    // Convert string inputs to numbers, defaulting to 0 if empty
     const submitData = {
-      ...formData,
-      numberOfAdults: parseInt(formData.numberOfAdults) || 0,
-      numberOfChildren: parseInt(formData.numberOfChildren) || 0
+      'Type of Event': formData.typeOfEvent,
+      '# of Adults': parseInt(formData.numberOfAdults) || 0,
+      '# of Children': parseInt(formData.numberOfChildren) || 0,
+      'Event Date': new Date(formData.dateOfEvent).toISOString(),
+      'Status': formData.status,
+      'Notes': formData.notes
     };
 
-    console.log('📝 Submitting event form:', {
-      submitData,
-      leadId,
-      rawFormData: formData
-    });
-
     try {
-      if (!leadId) {
-        console.log('❌ Form submission failed: Missing leadId');
-        throw new Error('Lead ID is required');
-      }
-
-      console.log('📤 Sending request to /api/admin/events...');
-      const response = await fetch('/api/admin/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...submitData,
-          leadId
-        }),
+      const response = await fetch(`/api/admin/events/${event.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submitData)
       });
-
       const data = await response.json();
-      console.log('📥 Received response:', {
-        status: response.status,
-        ok: response.ok,
-        data,
-        headers: Object.fromEntries(response.headers.entries())
-      });
-
       if (!response.ok) {
-        console.log('❌ Request failed:', {
-          status: response.status,
-          statusText: response.statusText,
-          data,
-          details: data.details
-        });
-        throw new Error(data.error || data.details || 'Failed to create event');
+        throw new Error(data.error || data.details || 'Failed to update event');
       }
-
-      console.log('✅ Event created successfully:', data);
       onSuccess();
       onClose();
     } catch (err) {
-      console.error('❌ Error in form submission:', {
-        error: err,
-        message: err instanceof Error ? err.message : 'Unknown error',
-        stack: err instanceof Error ? err.stack : undefined
-      });
-      setError(err instanceof Error ? err.message : 'An error occurred while creating the event');
+      setError(err instanceof Error ? err.message : 'An error occurred while updating the event');
     } finally {
       setIsSubmitting(false);
     }
@@ -143,7 +120,7 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
               {/* Header */}
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 font-inter">
-                  Create New Event
+                  Edit Event
                 </h3>
                 <button
                   onClick={onClose}
@@ -339,7 +316,7 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
                     disabled={isSubmitting}
                     className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 border border-transparent rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? 'Creating...' : 'Create Event'}
+                    {isSubmitting ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
               </form>

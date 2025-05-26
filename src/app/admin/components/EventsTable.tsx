@@ -3,6 +3,7 @@ import React from 'react';
 interface EventRecord {
   id: string;
   fields: {
+    "Title": string;
     "Type of Event": string;
     "Event Date": string;
     "# of Adults": number;
@@ -48,6 +49,7 @@ const EventsTable: React.FC<EventsTableProps> = ({ events, isLoading }) => {
       <table className="min-w-full divide-y divide-gray-200" role="grid">
         <thead className="bg-gray-50">
           <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event Date</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"># Adults</th>
@@ -60,6 +62,7 @@ const EventsTable: React.FC<EventsTableProps> = ({ events, isLoading }) => {
         <tbody className="bg-white divide-y divide-gray-200">
           {sortedEvents.map((event) => (
             <tr key={event.id} className="hover:bg-gray-50">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{event.fields["Title"]}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Type of Event"]}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Event Date"] ? new Date(event.fields["Event Date"]).toLocaleString() : ''}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["# of Adults"]}</td>
@@ -67,7 +70,7 @@ const EventsTable: React.FC<EventsTableProps> = ({ events, isLoading }) => {
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Status"]}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Notes"]}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
-                <button className="underline hover:text-blue-800">Edit</button>
+                <button className="px-3 py-1 rounded bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">Edit</button>
               </td>
             </tr>
           ))}
