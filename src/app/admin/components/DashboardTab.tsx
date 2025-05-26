@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import useSWR from 'swr';
 import dynamic from 'next/dynamic';
 
-const LeadsTable = dynamic(() => import('./LeadsTable_NEW'), {
+// @ts-expect-error: force cache bust
+const LeadsTable = dynamic(() => import('./LeadsTable_NEW?cacheBust=zz999'), {
   loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading leads...</div>
 }) as any;
 
