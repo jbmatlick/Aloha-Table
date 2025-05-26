@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import EditEventModal from './EditEventModal';
 
 interface EventRecord {
   id: string;
@@ -21,6 +22,9 @@ interface EventsTableProps {
 }
 
 const EventsTable: React.FC<EventsTableProps> = ({ events, isLoading }) => {
+  const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   if (isLoading) {
     return (
       <div className="py-16 text-center text-lg text-gray-400 font-serif">
@@ -45,38 +49,65 @@ const EventsTable: React.FC<EventsTableProps> = ({ events, isLoading }) => {
   });
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200" role="grid">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event Date</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"># Adults</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"># Children</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Edit</th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {sortedEvents.map((event) => (
-            <tr key={event.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{event.fields["Title"]}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Type of Event"]}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Event Date"] ? new Date(event.fields["Event Date"]).toLocaleString() : ''}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["# of Adults"]}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["# of Children"]}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Status"]}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Notes"]}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
-                <button className="px-3 py-1 rounded bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">Edit</button>
-              </td>
+    <>
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200" role="grid">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event Date</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"># Adults</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"># Children</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Edit</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {sortedEvents.map((event) => (
+              <tr key={event.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{event.fields["Title"]}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Type of Event"]}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Event Date"] ? new Date(event.fields["Event Date"]).toLocaleString() : ''}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["# of Adults"]}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["# of Children"]}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Status"]}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Notes"]}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                  <button 
+                    onClick={() => {
+                      setSelectedEvent(event);
+                      setIsModalOpen(true);
+                    }}
+                    className="px-3 py-1 rounded bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+                  >
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Edit Event Modal */}
+      {selectedEvent && (
+        <EditEventModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedEvent(null);
+          }}
+          event={selectedEvent}
+          onSuccess={() => {
+            // The events will automatically refresh due to SWR
+            setIsModalOpen(false);
+            setSelectedEvent(null);
+          }}
+        />
+      )}
+    </>
   );
 };
 
