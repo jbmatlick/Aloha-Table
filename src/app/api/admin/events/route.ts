@@ -105,51 +105,87 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID) {
-      console.log('❌ Event creation failed: Missing Airtable configuration');
-      throw new Error('Airtable configuration is missing');
+    // Validate Airtable configuration
+    if (!process.env.AIRTABLE_API_KEY) {
+      console.log('❌ Event creation failed: Missing AIRTABLE_API_KEY');
+      throw new Error('Airtable API key is missing');
+    }
+    if (!process.env.AIRTABLE_BASE_ID) {
+      console.log('❌ Event creation failed: Missing AIRTABLE_BASE_ID');
+      throw new Error('Airtable Base ID is missing');
     }
 
-    console.log('🔌 Connecting to Airtable...');
-    const airtable = new Airtable({
-      apiKey: process.env.AIRTABLE_API_KEY
+    console.log('🔌 Connecting to Airtable...', {
+      hasApiKey: !!process.env.AIRTABLE_API_KEY,
+      hasBaseId: !!process.env.AIRTABLE_BASE_ID,
+      baseId: process.env.AIRTABLE_BASE_ID
     });
 
-    const base = airtable.base(process.env.AIRTABLE_BASE_ID);
-    const table = base('Events');
+    try {
+      const airtable = new Airtable({
+        apiKey: process.env.AIRTABLE_API_KEY
+      });
 
-    console.log('📤 Creating record in Airtable...');
-    const record = await table.create({
-      'Type of Event': typeOfEvent,
-      'Number of Adults': numberOfAdults || 0,
-      'Number of Children': numberOfChildren || 0,
-      'Date of Event': dateOfEvent,
-      'Status': status || 'New',
-      'Notes': notes || '',
-      'Lead': [leadId]
-    });
+      const base = airtable.base(process.env.AIRTABLE_BASE_ID);
+      const table = base('Events');
 
-    console.log('✅ Event created successfully:', {
-      id: record.id,
-      fields: record.fields
-    });
+      const eventData = {
+        'Type of Event': typeOfEvent,
+        'Number of Adults': numberOfAdults || 0,
+        'Number of Children': numberOfChildren || 0,
+        'Date of Event': dateOfEvent,
+        'Status': status || 'New',
+        'Notes': notes || '',
+        'Lead': [leadId]
+      };
 
-    return NextResponse.json({
-      id: record.id,
-      fields: {
-        'Type of Event': record.get('Type of Event'),
-        'Number of Adults': record.get('Number of Adults'),
-        'Number of Children': record.get('Number of Children'),
-        'Date of Event': record.get('Date of Event'),
-        'Status': record.get('Status'),
-        'Notes': record.get('Notes'),
-        'Lead': record.get('Lead')
-      }
-    });
+      console.log('📤 Creating record in Airtable with data:', eventData);
+
+      const record = await table.create(eventData);
+      console.log('✅ Event created successfully:', {
+        id: record.id,
+        fields: record.fields
+      });
+
+      return NextResponse.json({
+        id: record.id,
+        fields: {
+          'Type of Event': record.get('Type of Event'),
+          'Number of Adults': record.get('Number of Adults'),
+          'Number of Children': record.get('Number of Children'),
+          'Date of Event': record.get('Date of Event'),
+          'Status': record.get('Status'),
+          'Notes': record.get('Notes'),
+          'Lead': record.get('Lead')
+        }
+      });
+    } catch (airtableError) {
+      console.error('❌ Airtable error:', {
+        error: airtableError,
+        message: airtableError instanceof Error ? airtableError.message : 'Unknown Airtable error',
+        stack: airtableError instanceof Error ? airtableError.stack : undefined
+      });
+      
+      return NextResponse.json(
+        { 
+          error: 'Failed to create event in Airtable', 
+          details: airtableError instanceof Error ? airtableError.message : 'Unknown Airtable error'
+        },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error('❌ Error creating event:', error);
+    console.error('❌ Error creating event:', {
+      error,
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
     return NextResponse.json(
-      { error: 'Failed to create event', details: error instanceof Error ? error.message : 'Unknown error' },
+      { 
+        error: 'Failed to create event', 
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
