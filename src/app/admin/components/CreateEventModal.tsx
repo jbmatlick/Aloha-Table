@@ -104,8 +104,7 @@ export default function CreateEventModal({ isOpen, onClose, leadId, leadName, on
 
       console.log('✅ Event created successfully:', data);
       onSuccess();
-      router.push('/admin?tab=events');
-      router.refresh();
+      window.location.href = '/admin?tab=events';
       onClose();
     } catch (err) {
       console.error('❌ Error in form submission:', {
