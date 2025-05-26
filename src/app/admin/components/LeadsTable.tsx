@@ -5,6 +5,8 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import CreateEventModal from './CreateEventModal';
 import LeadEvents from './LeadEvents';
 
+console.log('🧠 Using LeadsTable: THIS IS THE NEW VERSION');
+
 interface ContactRecord {
   id: string;
   fields: {
