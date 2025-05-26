@@ -91,7 +91,17 @@ const EventsTable: React.FC<EventsTableProps> = ({ events, isLoading }) => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Event Date"] ? new Date(event.fields["Event Date"]).toLocaleString() : ''}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["# of Adults"]}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["# of Children"]}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Status"]}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                    ${event.fields["Status"] === "New" ? 'bg-blue-100 text-blue-800' :
+                      event.fields["Status"] === "Scheduled" ? 'bg-green-100 text-green-800' :
+                      event.fields["Status"] === "Complete" ? 'bg-gray-200 text-gray-700' :
+                      event.fields["Status"] === "Archived" ? 'bg-gray-700 text-gray-100' :
+                      'bg-gray-100 text-gray-800'}
+                  `}>
+                    {event.fields["Status"]}
+                  </span>
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{event.fields["Notes"]}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
                   <button 

@@ -230,7 +230,7 @@ export default function EditEventModal({ isOpen, onClose, event, onSuccess }: Ed
 
                 {/* Status */}
                 <div>
-                  <Listbox value={formData.status} onChange={(value: EventStatus) => setFormData(prev => ({ ...prev, status: value }))}>
+                  <Listbox value={formData.status} onChange={(value: string) => setFormData(prev => ({ ...prev, status: value as any }))}>
                     <div className="relative">
                       <Listbox.Label className="block text-sm font-medium text-gray-700 mb-1.5">
                         Status
