@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import dynamic from 'next/dynamic';
 
 // @ts-expect-error: force query string is for cache busting, not a real module
-const LeadsTable = dynamic(() => import('./LeadsTable?force=abc123'), {
+const LeadsTable = dynamic(() => import('./LeadsTable?force=def456'), {
   loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading leads...</div>
 }) as any;
 
