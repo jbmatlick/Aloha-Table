@@ -160,13 +160,12 @@ export async function POST(request: Request) {
 
       const eventData = {
         'Type of Event': typeOfEvent,
-        'Number of Adults': numberOfAdults || 0,
-        'Number of Children': numberOfChildren || 0,
-        'Date of Event': formattedDate,
+        '# of Adults': numberOfAdults || 0,
+        '# of Children': numberOfChildren || 0,
+        'Event Date': formattedDate,
         'Status': status || 'New',
         'Notes': notes || '',
-        'Lead': [leadId],
-        ...(referrerId ? { 'Referrer': [referrerId] } : {})
+        'Lead': [leadId]
       };
 
       console.log('📤 Creating record in Airtable with data:', {
@@ -175,8 +174,8 @@ export async function POST(request: Request) {
       });
 
       // Validate the data before sending to Airtable
-      if (typeof eventData['Number of Adults'] !== 'number' || 
-          typeof eventData['Number of Children'] !== 'number') {
+      if (typeof eventData['# of Adults'] !== 'number' || 
+          typeof eventData['# of Children'] !== 'number') {
         throw new Error('Invalid number format for adults or children');
       }
 
@@ -191,9 +190,9 @@ export async function POST(request: Request) {
           id: record.id,
           fields: {
             'Type of Event': record.get('Type of Event'),
-            'Number of Adults': record.get('Number of Adults'),
-            'Number of Children': record.get('Number of Children'),
-            'Date of Event': record.get('Date of Event'),
+            'Number of Adults': record.get('# of Adults'),
+            'Number of Children': record.get('# of Children'),
+            'Date of Event': record.get('Event Date'),
             'Status': record.get('Status'),
             'Notes': record.get('Notes'),
             'Lead': record.get('Lead')
