@@ -118,28 +118,41 @@ export async function POST(request: Request) {
     console.log('🔌 Connecting to Airtable...', {
       hasApiKey: !!process.env.AIRTABLE_API_KEY,
       hasBaseId: !!process.env.AIRTABLE_BASE_ID,
-      baseId: process.env.AIRTABLE_BASE_ID
+      baseId: process.env.AIRTABLE_BASE_ID?.substring(0, 4) + '...'
     });
 
     try {
+      // Initialize Airtable with explicit configuration
       const airtable = new Airtable({
-        apiKey: process.env.AIRTABLE_API_KEY
+        apiKey: process.env.AIRTABLE_API_KEY,
+        endpointUrl: 'https://api.airtable.com'
       });
 
+      console.log('✅ Airtable client initialized');
+
       const base = airtable.base(process.env.AIRTABLE_BASE_ID);
+      console.log('✅ Airtable base connected');
+
       const table = base('Events');
+      console.log('✅ Airtable table selected');
+
+      // Format the date to ensure it's in the correct format for Airtable
+      const formattedDate = new Date(dateOfEvent).toISOString().split('T')[0];
 
       const eventData = {
         'Type of Event': typeOfEvent,
         'Number of Adults': numberOfAdults || 0,
         'Number of Children': numberOfChildren || 0,
-        'Date of Event': dateOfEvent,
+        'Date of Event': formattedDate,
         'Status': status || 'New',
         'Notes': notes || '',
         'Lead': [leadId]
       };
 
-      console.log('📤 Creating record in Airtable with data:', eventData);
+      console.log('📤 Creating record in Airtable with data:', {
+        ...eventData,
+        Lead: eventData.Lead[0] // Log just the ID for clarity
+      });
 
       const record = await table.create(eventData);
       console.log('✅ Event created successfully:', {
@@ -163,7 +176,8 @@ export async function POST(request: Request) {
       console.error('❌ Airtable error:', {
         error: airtableError,
         message: airtableError instanceof Error ? airtableError.message : 'Unknown Airtable error',
-        stack: airtableError instanceof Error ? airtableError.stack : undefined
+        stack: airtableError instanceof Error ? airtableError.stack : undefined,
+        name: airtableError instanceof Error ? airtableError.name : 'Unknown'
       });
       
       return NextResponse.json(
@@ -178,7 +192,8 @@ export async function POST(request: Request) {
     console.error('❌ Error creating event:', {
       error,
       message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : 'Unknown'
     });
     
     return NextResponse.json(
