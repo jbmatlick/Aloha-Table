@@ -177,24 +177,71 @@ export async function POST(request: Request) {
         throw new Error('Invalid number format for adults or children');
       }
 
-      const record = await table.create(eventData);
-      console.log('✅ Event created successfully:', {
-        id: record.id,
-        fields: record.fields
-      });
+      try {
+        const record = await table.create(eventData);
+        console.log('✅ Event created successfully:', {
+          id: record.id,
+          fields: record.fields
+        });
 
-      return NextResponse.json({
-        id: record.id,
-        fields: {
-          'Type of Event': record.get('Type of Event'),
-          'Number of Adults': record.get('Number of Adults'),
-          'Number of Children': record.get('Number of Children'),
-          'Date of Event': record.get('Date of Event'),
-          'Status': record.get('Status'),
-          'Notes': record.get('Notes'),
-          'Lead': record.get('Lead')
+        return NextResponse.json({
+          id: record.id,
+          fields: {
+            'Type of Event': record.get('Type of Event'),
+            'Number of Adults': record.get('Number of Adults'),
+            'Number of Children': record.get('Number of Children'),
+            'Date of Event': record.get('Date of Event'),
+            'Status': record.get('Status'),
+            'Notes': record.get('Notes'),
+            'Lead': record.get('Lead')
+          }
+        });
+      } catch (createError) {
+        console.error('❌ Error creating Airtable record:', {
+          error: createError,
+          message: createError instanceof Error ? createError.message : 'Unknown error',
+          stack: createError instanceof Error ? createError.stack : undefined,
+          name: createError instanceof Error ? createError.name : 'Unknown',
+          data: eventData
+        });
+
+        // Check for specific Airtable error patterns
+        const errorMessage = createError instanceof Error ? createError.message : 'Unknown error';
+        
+        if (errorMessage.includes('INVALID_PERMISSIONS')) {
+          return NextResponse.json(
+            { error: 'Airtable permissions error', details: 'The API key does not have permission to create records' },
+            { status: 403 }
+          );
         }
-      });
+        if (errorMessage.includes('INVALID_BASE')) {
+          return NextResponse.json(
+            { error: 'Invalid Airtable base', details: 'The specified base ID is invalid' },
+            { status: 400 }
+          );
+        }
+        if (errorMessage.includes('INVALID_TABLE')) {
+          return NextResponse.json(
+            { error: 'Invalid Airtable table', details: `The ${process.env.AIRTABLE_TABLE_NAME_EVENTS} table does not exist` },
+            { status: 400 }
+          );
+        }
+        if (errorMessage.includes('INVALID_FIELD')) {
+          return NextResponse.json(
+            { error: 'Invalid field', details: 'One or more fields in the event data are invalid' },
+            { status: 400 }
+          );
+        }
+
+        return NextResponse.json(
+          { 
+            error: 'Failed to create event in Airtable', 
+            details: errorMessage,
+            data: eventData
+          },
+          { status: 500 }
+        );
+      }
     } catch (airtableError) {
       console.error('❌ Airtable error:', {
         error: airtableError,
@@ -202,28 +249,6 @@ export async function POST(request: Request) {
         stack: airtableError instanceof Error ? airtableError.stack : undefined,
         name: airtableError instanceof Error ? airtableError.name : 'Unknown'
       });
-      
-      // Handle specific Airtable errors
-      if (airtableError instanceof Error) {
-        if (airtableError.message.includes('INVALID_PERMISSIONS')) {
-          return NextResponse.json(
-            { error: 'Airtable permissions error', details: 'The API key does not have permission to create records' },
-            { status: 403 }
-          );
-        }
-        if (airtableError.message.includes('INVALID_BASE')) {
-          return NextResponse.json(
-            { error: 'Invalid Airtable base', details: 'The specified base ID is invalid' },
-            { status: 400 }
-          );
-        }
-        if (airtableError.message.includes('INVALID_TABLE')) {
-          return NextResponse.json(
-            { error: 'Invalid Airtable table', details: `The ${process.env.AIRTABLE_TABLE_NAME_EVENTS} table does not exist` },
-            { status: 400 }
-          );
-        }
-      }
       
       return NextResponse.json(
         { 

@@ -22,8 +22,8 @@ const EVENT_STATUSES = ["New", "Scheduled"];
 export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }: CreateEventModalProps) {
   const [formData, setFormData] = useState({
     typeOfEvent: EVENT_TYPES[0],
-    numberOfAdults: 0,
-    numberOfChildren: 0,
+    numberOfAdults: '',
+    numberOfChildren: '',
     dateOfEvent: '',
     status: EVENT_STATUSES[0],
     notes: ''
@@ -36,9 +36,17 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
     setIsSubmitting(true);
     setError(null);
 
+    // Convert string inputs to numbers, defaulting to 0 if empty
+    const submitData = {
+      ...formData,
+      numberOfAdults: parseInt(formData.numberOfAdults) || 0,
+      numberOfChildren: parseInt(formData.numberOfChildren) || 0
+    };
+
     console.log('📝 Submitting event form:', {
-      formData,
-      leadId
+      submitData,
+      leadId,
+      rawFormData: formData
     });
 
     try {
@@ -54,7 +62,7 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
+          ...submitData,
           leadId
         }),
       });
@@ -63,19 +71,30 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
       console.log('📥 Received response:', {
         status: response.status,
         ok: response.ok,
-        data
+        data,
+        headers: Object.fromEntries(response.headers.entries())
       });
 
       if (!response.ok) {
-        console.log('❌ Request failed:', data);
+        console.log('❌ Request failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          data,
+          error: data.error,
+          details: data.details
+        });
         throw new Error(data.error || data.details || 'Failed to create event');
       }
 
-      console.log('✅ Event created successfully');
+      console.log('✅ Event created successfully:', data);
       onSuccess();
       onClose();
     } catch (err) {
-      console.error('❌ Error in form submission:', err);
+      console.error('❌ Error in form submission:', {
+        error: err,
+        message: err instanceof Error ? err.message : 'Unknown error',
+        stack: err instanceof Error ? err.stack : undefined
+      });
       setError(err instanceof Error ? err.message : 'An error occurred while creating the event');
     } finally {
       setIsSubmitting(false);
@@ -151,7 +170,7 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
                       id="numberOfAdults"
                       min="0"
                       value={formData.numberOfAdults}
-                      onChange={(e) => setFormData(prev => ({ ...prev, numberOfAdults: parseInt(e.target.value) || 0 }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, numberOfAdults: e.target.value }))}
                       className="block w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors text-base"
                     />
                   </div>
@@ -164,7 +183,7 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
                       id="numberOfChildren"
                       min="0"
                       value={formData.numberOfChildren}
-                      onChange={(e) => setFormData(prev => ({ ...prev, numberOfChildren: parseInt(e.target.value) || 0 }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, numberOfChildren: e.target.value }))}
                       className="block w-full rounded-lg border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors text-base"
                     />
                   </div>
