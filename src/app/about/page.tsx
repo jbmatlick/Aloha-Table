@@ -6,6 +6,15 @@ import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 
 export default function AboutPage() {
+  const bioTextArray = [
+    "Hello my name is Edwayris Oliveras, I'm a 21-year-old private chef based on the beautiful island of Kauai. My journey in the kitchen started as a little girl, side-by-side with my great-grandmother, learning how to cook with heart, intuition, and a deep respect for flavor. Today, that same love carries through everything I do—from intimate in-home dinners to thoughtful meal prep services tailored to individual tastes and dietary needs.",
+    "Though I've been cooking professionally for just over a year, the kitchen has always been my creative space. I specialize in high-quality, traditional meals with a homey feel—food that feels both comforting and elevated. I'm gluten-free myself, so I have a strong awareness around dietary preferences, but I never limit my menus to just one type of eater. Whether you're gluten-free, vegan, or an omnivore, there will always be something satisfying and delicious for you at the table.",
+    "What truly sets me apart is my ability to take any set of ingredients and transform them into something flavorful and nourishing. I don't believe in overcomplicating things—simple can be spectacular when the flavors are right. I'm known for creating meals that are approachable yet memorable, familiar yet full of personality.",
+    "Living on Kauai gives me the unique opportunity to source the freshest, most vibrant ingredients directly from local farmers markets. I love building menus that reflect the rhythm of the island—seasonal, colorful, and deeply connected to the land. Supporting local growers and incorporating just-picked produce adds another layer of meaning and freshness to everything I create. In collaboration with a talented local sommelier, I also offer thoughtfully curated wine and spirit pairings that enhance the flavors of each dish. Whether it's a crisp white to accompany fresh seafood or a bold red that brings depth to a hearty entrée, our pairings are designed to elevate your entire dining experience.",
+    "For me, private cheffing is about more than just food—it's about people. I love building real relationships with my clients, curating meals that reflect their preferences and lifestyles. Every menu I create is personal, using fresh ingredients to deliver dishes that satisfy the body and soul.",
+    "Whether you're planning a special dinner or need consistent, thoughtful meal prep, I'm here to help you feel nourished, cared for, and happy with what you're eating."
+  ];
+
   return (
     <>
       <Navbar />
@@ -46,20 +55,9 @@ export default function AboutPage() {
             <div className="text-center">
               <h2 className="text-3xl font-serif text-gray-900 mb-2">Edwayris Oliveras</h2>
               <p className="text-xl text-island-green font-medium mb-6">Private Chef</p>
-              <p className="text-gray-600 leading-relaxed whitespace-pre-line">
-Hello my name is Edwayris Oliveras, I'm a 21-year-old private chef based on the beautiful island of Kauai. My journey in the kitchen started as a little girl, side-by-side with my great-grandmother, learning how to cook with heart, intuition, and a deep respect for flavor. Today, that same love carries through everything I do—from intimate in-home dinners to thoughtful meal prep services tailored to individual tastes and dietary needs.
-
-Though I've been cooking professionally for just over a year, the kitchen has always been my creative space. I specialize in high-quality, traditional meals with a homey feel—food that feels both comforting and elevated. I'm gluten-free myself, so I have a strong awareness around dietary preferences, but I never limit my menus to just one type of eater. Whether you're gluten-free, vegan, or an omnivore, there will always be something satisfying and delicious for you at the table.
-
-What truly sets me apart is my ability to take any set of ingredients and transform them into something flavorful and nourishing. I don't believe in overcomplicating things—simple can be spectacular when the flavors are right. I'm known for creating meals that are approachable yet memorable, familiar yet full of personality.
-
-Living on Kauai gives me the unique opportunity to source the freshest, most vibrant ingredients directly from local farmers markets. I love building menus that reflect the rhythm of the island—seasonal, colorful, and deeply connected to the land. Supporting local growers and incorporating just-picked produce adds another layer of meaning and freshness to everything I create.
-In collaboration with a talented local sommelier, I also offer thoughtfully curated wine and spirit pairings that enhance the flavors of each dish. Whether it's a crisp white to accompany fresh seafood or a bold red that brings depth to a hearty entrée, our pairings are designed to elevate your entire dining experience.
-
-For me, private cheffing is about more than just food—it's about people. I love building real relationships with my clients, curating meals that reflect their preferences and lifestyles. Every menu I create is personal, using fresh ingredients to deliver dishes that satisfy the body and soul.
-
-Whether you're planning a special dinner or need consistent, thoughtful meal prep, I'm here to help you feel nourished, cared for, and happy with what you're eating.
-              </p>
+              {bioTextArray.map((para, idx) => (
+                <p key={idx} className="text-gray-600 leading-relaxed mb-4">{para}</p>
+              ))}
             </div>
           </div>
         </div>
