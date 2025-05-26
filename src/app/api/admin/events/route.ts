@@ -202,7 +202,8 @@ export async function POST(request: Request) {
           message: createError instanceof Error ? createError.message : 'Unknown error',
           stack: createError instanceof Error ? createError.stack : undefined,
           name: createError instanceof Error ? createError.name : 'Unknown',
-          data: eventData
+          data: eventData,
+          errorString: JSON.stringify(createError, Object.getOwnPropertyNames(createError))
         });
 
         // Check for specific Airtable error patterns
@@ -237,7 +238,12 @@ export async function POST(request: Request) {
           { 
             error: 'Failed to create event in Airtable', 
             details: errorMessage,
-            data: eventData
+            data: eventData,
+            errorDetails: createError instanceof Error ? {
+              name: createError.name,
+              message: createError.message,
+              stack: createError.stack
+            } : 'Unknown error type'
           },
           { status: 500 }
         );
@@ -247,13 +253,19 @@ export async function POST(request: Request) {
         error: airtableError,
         message: airtableError instanceof Error ? airtableError.message : 'Unknown Airtable error',
         stack: airtableError instanceof Error ? airtableError.stack : undefined,
-        name: airtableError instanceof Error ? airtableError.name : 'Unknown'
+        name: airtableError instanceof Error ? airtableError.name : 'Unknown',
+        errorString: JSON.stringify(airtableError, Object.getOwnPropertyNames(airtableError))
       });
       
       return NextResponse.json(
         { 
           error: 'Failed to create event in Airtable', 
-          details: airtableError instanceof Error ? airtableError.message : 'Unknown Airtable error'
+          details: airtableError instanceof Error ? airtableError.message : 'Unknown Airtable error',
+          errorDetails: airtableError instanceof Error ? {
+            name: airtableError.name,
+            message: airtableError.message,
+            stack: airtableError.stack
+          } : 'Unknown error type'
         },
         { status: 500 }
       );
@@ -263,13 +275,19 @@ export async function POST(request: Request) {
       error,
       message: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : 'Unknown'
+      name: error instanceof Error ? error.name : 'Unknown',
+      errorString: JSON.stringify(error, Object.getOwnPropertyNames(error))
     });
     
     return NextResponse.json(
       { 
         error: 'Failed to create event', 
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
+        errorDetails: error instanceof Error ? {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        } : 'Unknown error type'
       },
       { status: 500 }
     );
