@@ -5,8 +5,19 @@ import dynamic from 'next/dynamic';
 
 console.log('🤖 RENDERING DashboardTab');
 
-const LeadsTable = dynamic(() => import('./LeadsTable?t=' + new Date().getTime()), {
-  loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading leads...</div>
+const LeadsTable = dynamic(() => import('./LeadsTable?t=' + new Date().getTime())
+  .then(mod => {
+    console.log('📦 LeadsTable: Module loaded successfully');
+    return mod;
+  })
+  .catch(err => {
+    console.error('❌ LeadsTable: Error loading module:', err);
+    throw err;
+  }), {
+  loading: () => {
+    console.log('⏳ LeadsTable: Loading state');
+    return <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading leads...</div>;
+  }
 }) as any;
 
 const ReferrersTable = dynamic(() => import('./ReferrersTable'), {
