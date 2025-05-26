@@ -12,7 +12,7 @@ const EVENT_TYPES = [
   "Custom"
 ] as const;
 
-const EVENT_STATUSES = ["New", "Scheduled"] as const;
+const EVENT_STATUSES = ["New", "Scheduled", "Complete", "Archived"] as const;
 
 type EventType = typeof EVENT_TYPES[number];
 type EventStatus = typeof EVENT_STATUSES[number];
@@ -120,7 +120,7 @@ export default function EditEventModal({ isOpen, onClose, event, onSuccess }: Ed
               {/* Header */}
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 font-inter">
-                  Edit Event
+                  Edit Event: {event.fields["Title"]}
                 </h3>
                 <button
                   onClick={onClose}

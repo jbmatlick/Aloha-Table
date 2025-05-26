@@ -24,6 +24,7 @@ interface EventsTableProps {
 const EventsTable: React.FC<EventsTableProps> = ({ events, isLoading }) => {
   const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hideArchived, setHideArchived] = useState(true);
 
   if (isLoading) {
     return (
@@ -41,8 +42,13 @@ const EventsTable: React.FC<EventsTableProps> = ({ events, isLoading }) => {
     );
   }
 
+  // Filter events based on hideArchived
+  const filteredEvents = hideArchived
+    ? events.filter(e => e.fields["Status"] !== "Archived" && e.fields["Status"] !== "Complete")
+    : events;
+
   // Sort events by Event Date descending
-  const sortedEvents = [...events].sort((a, b) => {
+  const sortedEvents = [...filteredEvents].sort((a, b) => {
     const dateA = new Date(a.fields["Event Date"] || a.fields["Created At"] || '').getTime();
     const dateB = new Date(b.fields["Event Date"] || b.fields["Created At"] || '').getTime();
     return dateB - dateA;
@@ -50,6 +56,19 @@ const EventsTable: React.FC<EventsTableProps> = ({ events, isLoading }) => {
 
   return (
     <>
+      {/* Hide Archived/Complete Checkbox */}
+      <div className="flex items-center mb-2">
+        <input
+          id="hide-archived"
+          type="checkbox"
+          checked={hideArchived}
+          onChange={e => setHideArchived(e.target.checked)}
+          className="mr-2"
+        />
+        <label htmlFor="hide-archived" className="text-sm text-gray-700 select-none">
+          Hide archived and complete events
+        </label>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200" role="grid">
           <thead className="bg-gray-50">
