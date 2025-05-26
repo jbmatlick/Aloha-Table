@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon, CalendarIcon, UserGroupIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { Listbox } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import { useRouter } from 'next/navigation';
 
 interface CreateEventModalProps {
   isOpen: boolean;
   onClose: () => void;
   leadId: string;
+  leadName: string;
   onSuccess: () => void;
 }
 
@@ -33,7 +35,7 @@ interface FormData {
   notes: string;
 }
 
-export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }: CreateEventModalProps) {
+export default function CreateEventModal({ isOpen, onClose, leadId, leadName, onSuccess }: CreateEventModalProps) {
   const [formData, setFormData] = useState<FormData>({
     typeOfEvent: EVENT_TYPES[0],
     numberOfAdults: '',
@@ -44,6 +46,16 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [eventCreated, setEventCreated] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (eventCreated && !isOpen) {
+      router.push('/admin?tab=events');
+      router.refresh();
+      setEventCreated(false);
+    }
+  }, [eventCreated, isOpen, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,6 +114,7 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
       console.log('✅ Event created successfully:', data);
       onSuccess();
       onClose();
+      setEventCreated(true);
     } catch (err) {
       console.error('❌ Error in form submission:', {
         error: err,
@@ -143,7 +156,7 @@ export default function CreateEventModal({ isOpen, onClose, leadId, onSuccess }:
               {/* Header */}
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 font-inter">
-                  Create New Event
+                  Create Event for {leadName}
                 </h3>
                 <button
                   onClick={onClose}

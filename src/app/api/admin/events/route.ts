@@ -322,4 +322,48 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const session = await getSession();
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID || !process.env.AIRTABLE_TABLE_NAME_EVENTS) {
+      throw new Error('Airtable configuration is missing');
+    }
+
+    const airtable = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY });
+    const base = airtable.base(process.env.AIRTABLE_BASE_ID);
+    const table = base(process.env.AIRTABLE_TABLE_NAME_EVENTS);
+
+    const body = await request.json();
+    const { id, ...fields } = body;
+    if (!id) {
+      return NextResponse.json({ error: 'Event ID is required' }, { status: 400 });
+    }
+
+    // Only update provided fields
+    const updateFields: any = {};
+    if (fields.typeOfEvent) updateFields['Type of Event'] = fields.typeOfEvent;
+    if (fields.numberOfAdults !== undefined) updateFields['# of Adults'] = fields.numberOfAdults;
+    if (fields.numberOfChildren !== undefined) updateFields['# of Children'] = fields.numberOfChildren;
+    if (fields.dateOfEvent) updateFields['Event Date'] = new Date(fields.dateOfEvent).toISOString();
+    if (fields.status) updateFields['Status'] = fields.status;
+    if (fields.notes !== undefined) updateFields['Notes'] = fields.notes;
+
+    try {
+      const record = await table.update(id, updateFields);
+      return NextResponse.json({
+        id: record.id,
+        fields: record.fields
+      });
+    } catch (err: any) {
+      return NextResponse.json({ error: 'Failed to update event', details: err.message }, { status: 500 });
+    }
+  } catch (error: any) {
+    return NextResponse.json({ error: 'Failed to update event', details: error.message }, { status: 500 });
+  }
 } 
