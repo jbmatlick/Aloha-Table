@@ -114,11 +114,16 @@ export async function POST(request: Request) {
       console.log('❌ Event creation failed: Missing AIRTABLE_BASE_ID');
       throw new Error('Airtable Base ID is missing');
     }
+    if (!process.env.AIRTABLE_TABLE_NAME_EVENTS) {
+      console.log('❌ Event creation failed: Missing AIRTABLE_TABLE_NAME_EVENTS');
+      throw new Error('Airtable Events table name is missing');
+    }
 
     console.log('🔌 Connecting to Airtable...', {
       hasApiKey: !!process.env.AIRTABLE_API_KEY,
       hasBaseId: !!process.env.AIRTABLE_BASE_ID,
-      baseId: process.env.AIRTABLE_BASE_ID?.substring(0, 4) + '...'
+      baseId: process.env.AIRTABLE_BASE_ID?.substring(0, 4) + '...',
+      eventsTableName: process.env.AIRTABLE_TABLE_NAME_EVENTS
     });
 
     try {
@@ -145,8 +150,8 @@ export async function POST(request: Request) {
         );
       }
 
-      const table = base('Events');
-      console.log('✅ Airtable table selected');
+      const table = base(process.env.AIRTABLE_TABLE_NAME_EVENTS);
+      console.log('✅ Airtable table selected:', process.env.AIRTABLE_TABLE_NAME_EVENTS);
 
       // Format the date to ensure it's in the correct format for Airtable
       const formattedDate = new Date(dateOfEvent).toISOString().split('T')[0];
@@ -214,7 +219,7 @@ export async function POST(request: Request) {
         }
         if (airtableError.message.includes('INVALID_TABLE')) {
           return NextResponse.json(
-            { error: 'Invalid Airtable table', details: 'The Events table does not exist' },
+            { error: 'Invalid Airtable table', details: `The ${process.env.AIRTABLE_TABLE_NAME_EVENTS} table does not exist` },
             { status: 400 }
           );
         }
