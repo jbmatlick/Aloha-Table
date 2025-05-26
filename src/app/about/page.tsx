@@ -22,19 +22,19 @@ export default function AboutPage() {
         {/* Hero Section */}
         <div className="relative h-[60vh] min-h-[400px] w-full">
           <Image
-            src="/images/iris.jpg"
-            alt="Edwayris Oliveras"
+            src="/images/kitchen-hero.jpg"
+            alt="Professional kitchen workspace"
             fill
             className="object-cover"
             priority
           />
           <div className="absolute inset-0 bg-black bg-opacity-40" />
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4">
+          <div className="absolute inset-0 flex flex-col justify-center text-white px-4">
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-serif text-center mb-4"
+              className="text-4xl md:text-5xl lg:text-6xl font-serif text-left mb-4"
             >
               Meet Your Chef
             </motion.h1>
@@ -43,7 +43,7 @@ export default function AboutPage() {
 
         {/* Chef Profile Section */}
         <div className="max-w-3xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col">
             <div className="relative w-64 h-80 rounded-lg overflow-hidden shadow-md mb-8">
               <Image
                 src="/images/iris.jpg"
@@ -52,7 +52,7 @@ export default function AboutPage() {
                 className="object-cover"
               />
             </div>
-            <div className="text-center">
+            <div className="text-left">
               <h2 className="text-3xl font-serif text-gray-900 mb-2">Edwayris Oliveras</h2>
               <p className="text-xl text-island-green font-medium mb-6">Private Chef</p>
               {bioTextArray.map((para, idx) => (
