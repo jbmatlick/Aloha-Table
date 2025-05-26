@@ -46,16 +46,7 @@ export default function CreateEventModal({ isOpen, onClose, leadId, leadName, on
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [eventCreated, setEventCreated] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    if (eventCreated && !isOpen) {
-      router.push('/admin?tab=events');
-      router.refresh();
-      setEventCreated(false);
-    }
-  }, [eventCreated, isOpen, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,8 +104,9 @@ export default function CreateEventModal({ isOpen, onClose, leadId, leadName, on
 
       console.log('✅ Event created successfully:', data);
       onSuccess();
+      router.push('/admin?tab=events');
+      router.refresh();
       onClose();
-      setEventCreated(true);
     } catch (err) {
       console.error('❌ Error in form submission:', {
         error: err,
