@@ -24,6 +24,7 @@ interface FormData {
   dateOfEvent: string;
   status: EventStatus;
   notes: string;
+  financialNotes: string;
 }
 
 interface EditEventModalProps {
@@ -40,7 +41,8 @@ export default function EditEventModal({ isOpen, onClose, event, onSuccess }: Ed
     numberOfChildren: '',
     dateOfEvent: '',
     status: EVENT_STATUSES[0],
-    notes: ''
+    notes: '',
+    financialNotes: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +55,8 @@ export default function EditEventModal({ isOpen, onClose, event, onSuccess }: Ed
         numberOfChildren: event.fields["# of Children"]?.toString() || '',
         dateOfEvent: event.fields["Event Date"] ? event.fields["Event Date"].slice(0, 10) : '',
         status: (event.fields["Status"] as EventStatus) || EVENT_STATUSES[0],
-        notes: event.fields["Notes"] || ''
+        notes: event.fields["Notes"] || '',
+        financialNotes: event.fields["Financial Notes"] || ''
       });
     }
   }, [event]);
@@ -70,7 +73,8 @@ export default function EditEventModal({ isOpen, onClose, event, onSuccess }: Ed
       numberOfChildren: parseInt(formData.numberOfChildren) || 0,
       dateOfEvent: formData.dateOfEvent,
       status: formData.status,
-      notes: formData.notes
+      notes: formData.notes,
+      financialNotes: formData.financialNotes
     };
 
     console.log('PATCH submitData:', submitData);
@@ -289,6 +293,21 @@ export default function EditEventModal({ isOpen, onClose, event, onSuccess }: Ed
                     onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                     className="block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base resize-none"
                     placeholder="Menu details and additional information..."
+                  />
+                </div>
+
+                {/* Financial Notes */}
+                <div>
+                  <label htmlFor="financialNotes" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Financial Notes
+                  </label>
+                  <textarea
+                    id="financialNotes"
+                    rows={2}
+                    value={formData.financialNotes}
+                    onChange={(e) => setFormData(prev => ({ ...prev, financialNotes: e.target.value }))}
+                    className="block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base resize-none"
+                    placeholder="e.g. $500 deposit paid, $1000 due on event date"
                   />
                 </div>
 

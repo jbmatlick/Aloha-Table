@@ -33,6 +33,7 @@ interface FormData {
   dateOfEvent: string;
   status: EventStatus;
   notes: string;
+  financialNotes: string;
 }
 
 export default function CreateEventModal({ isOpen, onClose, leadId, leadName, onSuccess }: CreateEventModalProps) {
@@ -42,7 +43,8 @@ export default function CreateEventModal({ isOpen, onClose, leadId, leadName, on
     numberOfChildren: '',
     dateOfEvent: '',
     status: EVENT_STATUSES[0],
-    notes: ''
+    notes: '',
+    financialNotes: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +59,8 @@ export default function CreateEventModal({ isOpen, onClose, leadId, leadName, on
     const submitData = {
       ...formData,
       numberOfAdults: parseInt(formData.numberOfAdults) || 0,
-      numberOfChildren: parseInt(formData.numberOfChildren) || 0
+      numberOfChildren: parseInt(formData.numberOfChildren) || 0,
+      'Financial Notes': formData.financialNotes
     };
 
     console.log('📝 Submitting event form:', {
@@ -313,6 +316,21 @@ export default function CreateEventModal({ isOpen, onClose, leadId, leadName, on
                     onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                     className="block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base resize-none"
                     placeholder="Menu details and additional information..."
+                  />
+                </div>
+
+                {/* Financial Notes */}
+                <div>
+                  <label htmlFor="financialNotes" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Financial Notes
+                  </label>
+                  <textarea
+                    id="financialNotes"
+                    rows={2}
+                    value={formData.financialNotes}
+                    onChange={(e) => setFormData(prev => ({ ...prev, financialNotes: e.target.value }))}
+                    className="block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base resize-none"
+                    placeholder="e.g. $500 deposit paid, $1000 due on event date"
                   />
                 </div>
 
