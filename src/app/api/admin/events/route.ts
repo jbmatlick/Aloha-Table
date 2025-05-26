@@ -133,6 +133,18 @@ export async function POST(request: Request) {
       const base = airtable.base(process.env.AIRTABLE_BASE_ID);
       console.log('✅ Airtable base connected');
 
+      // First, verify the lead exists
+      try {
+        const leadRecord = await base('Leads').find(leadId);
+        console.log('✅ Lead record found:', leadRecord.id);
+      } catch (leadError) {
+        console.error('❌ Lead not found:', leadError);
+        return NextResponse.json(
+          { error: 'Lead not found', details: 'The specified lead ID does not exist' },
+          { status: 400 }
+        );
+      }
+
       const table = base('Events');
       console.log('✅ Airtable table selected');
 
@@ -153,6 +165,12 @@ export async function POST(request: Request) {
         ...eventData,
         Lead: eventData.Lead[0] // Log just the ID for clarity
       });
+
+      // Validate the data before sending to Airtable
+      if (typeof eventData['Number of Adults'] !== 'number' || 
+          typeof eventData['Number of Children'] !== 'number') {
+        throw new Error('Invalid number format for adults or children');
+      }
 
       const record = await table.create(eventData);
       console.log('✅ Event created successfully:', {
@@ -179,6 +197,28 @@ export async function POST(request: Request) {
         stack: airtableError instanceof Error ? airtableError.stack : undefined,
         name: airtableError instanceof Error ? airtableError.name : 'Unknown'
       });
+      
+      // Handle specific Airtable errors
+      if (airtableError instanceof Error) {
+        if (airtableError.message.includes('INVALID_PERMISSIONS')) {
+          return NextResponse.json(
+            { error: 'Airtable permissions error', details: 'The API key does not have permission to create records' },
+            { status: 403 }
+          );
+        }
+        if (airtableError.message.includes('INVALID_BASE')) {
+          return NextResponse.json(
+            { error: 'Invalid Airtable base', details: 'The specified base ID is invalid' },
+            { status: 400 }
+          );
+        }
+        if (airtableError.message.includes('INVALID_TABLE')) {
+          return NextResponse.json(
+            { error: 'Invalid Airtable table', details: 'The Events table does not exist' },
+            { status: 400 }
+          );
+        }
+      }
       
       return NextResponse.json(
         { 
