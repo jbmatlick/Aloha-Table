@@ -31,10 +31,13 @@ export async function GET(request: Request) {
     const leadId = searchParams.get('leadId');
 
     // Build the query
-    let query = base(tableName).select({
-      sort: [{ field: 'Date of Event', direction: 'desc' }],
-      filterByFormula: leadId ? `{Lead} = '${leadId}'` : undefined
-    });
+    const selectOptions: any = {
+      sort: [{ field: 'Event Date', direction: 'desc' }]
+    };
+    if (leadId) {
+      selectOptions.filterByFormula = `{Lead} = '${leadId}'`;
+    }
+    let query = base(tableName).select(selectOptions);
 
     const records = await query.all();
     const events = records.map(record => ({
