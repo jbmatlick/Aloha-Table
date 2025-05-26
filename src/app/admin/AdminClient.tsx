@@ -8,6 +8,8 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import dynamic from 'next/dynamic';
 import { ErrorBoundary } from 'react-error-boundary';
 
+console.log('🔍 AdminClient: Starting to load');
+
 interface ContactRecord {
   id: string;
   fields: {
@@ -53,8 +55,14 @@ function formatLastLogin(lastLogin: string | undefined): string {
   }) + ' UTC';
 }
 
-const DashboardTab = dynamic(() => import('./components/DashboardTab'), {
-  loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading dashboard...</div>
+const DashboardTab = dynamic(() => import('./components/DashboardTab').then(mod => {
+  console.log('📦 DashboardTab: Module loaded');
+  return mod;
+}), {
+  loading: () => {
+    console.log('⏳ DashboardTab: Loading state');
+    return <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading dashboard...</div>;
+  }
 });
 
 const UsersTab = dynamic(() => import('./components/UsersTab'), {
