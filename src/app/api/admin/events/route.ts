@@ -40,20 +40,27 @@ export async function GET(request: Request) {
     let query = base(tableName).select(selectOptions);
 
     const records = await query.all();
-    const events = records.map(record => ({
-      id: record.id,
-      fields: {
-        'Title': record.get('Title') || '',
-        'Type of Event': record.get('Type of Event') || '',
-        '# of Adults': record.get('# of Adults') || 0,
-        '# of Children': record.get('# of Children') || 0,
-        'Event Date': record.get('Event Date') || '',
-        'Status': record.get('Status') || 'New',
-        'Notes': record.get('Notes') || '',
-        'Lead': record.get('Lead') || [],
-        'Created At': record.get('Created At') || undefined,
-      }
-    }));
+    const events = records
+      .filter(record => {
+        // Only include events with a Title and Event Date
+        const title = record.get('Title');
+        const eventDate = record.get('Event Date');
+        return title && eventDate;
+      })
+      .map(record => ({
+        id: record.id,
+        fields: {
+          'Title': record.get('Title') || '',
+          'Type of Event': record.get('Type of Event') || '',
+          '# of Adults': record.get('# of Adults') || 0,
+          '# of Children': record.get('# of Children') || 0,
+          'Event Date': record.get('Event Date') || '',
+          'Status': record.get('Status') || 'New',
+          'Notes': record.get('Notes') || '',
+          'Lead': record.get('Lead') || [],
+          'Created At': record.get('Created At') || undefined,
+        }
+      }));
 
     return NextResponse.json({ events });
   } catch (error) {
