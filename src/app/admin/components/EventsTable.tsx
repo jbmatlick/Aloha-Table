@@ -47,10 +47,10 @@ const EventsTable: React.FC<EventsTableProps> = ({ events, isLoading }) => {
     ? events.filter(e => e.fields["Status"] !== "Archived" && e.fields["Status"] !== "Complete")
     : events;
 
-  // Sort events by Event Date descending
+  // Sort events by Created At descending
   const sortedEvents = [...filteredEvents].sort((a, b) => {
-    const dateA = new Date(a.fields["Event Date"] || a.fields["Created At"] || '').getTime();
-    const dateB = new Date(b.fields["Event Date"] || b.fields["Created At"] || '').getTime();
+    const dateA = new Date(a.fields["Created At"] || '').getTime();
+    const dateB = new Date(b.fields["Created At"] || '').getTime();
     return dateB - dateA;
   });
 
