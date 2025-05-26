@@ -65,6 +65,7 @@ export async function POST(request: Request) {
     // Check authentication using Auth0 session
     const session = await getSession();
     if (!session?.user) {
+      console.log('❌ Event creation failed: Unauthorized');
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -81,8 +82,23 @@ export async function POST(request: Request) {
       leadId
     } = await request.json();
 
+    console.log('📝 Creating event with data:', {
+      typeOfEvent,
+      numberOfAdults,
+      numberOfChildren,
+      dateOfEvent,
+      status,
+      notes,
+      leadId
+    });
+
     // Validate required fields
     if (!typeOfEvent || !dateOfEvent || !leadId) {
+      console.log('❌ Event creation failed: Missing required fields', {
+        hasTypeOfEvent: !!typeOfEvent,
+        hasDateOfEvent: !!dateOfEvent,
+        hasLeadId: !!leadId
+      });
       return NextResponse.json(
         { error: 'Type of Event, Date of Event, and Lead ID are required' },
         { status: 400 }
@@ -90,9 +106,11 @@ export async function POST(request: Request) {
     }
 
     if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID) {
+      console.log('❌ Event creation failed: Missing Airtable configuration');
       throw new Error('Airtable configuration is missing');
     }
 
+    console.log('🔌 Connecting to Airtable...');
     const airtable = new Airtable({
       apiKey: process.env.AIRTABLE_API_KEY
     });
@@ -100,6 +118,7 @@ export async function POST(request: Request) {
     const base = airtable.base(process.env.AIRTABLE_BASE_ID);
     const table = base('Events');
 
+    console.log('📤 Creating record in Airtable...');
     const record = await table.create({
       'Type of Event': typeOfEvent,
       'Number of Adults': numberOfAdults || 0,
@@ -108,6 +127,11 @@ export async function POST(request: Request) {
       'Status': status || 'New',
       'Notes': notes || '',
       'Lead': [leadId]
+    });
+
+    console.log('✅ Event created successfully:', {
+      id: record.id,
+      fields: record.fields
     });
 
     return NextResponse.json({
@@ -123,7 +147,7 @@ export async function POST(request: Request) {
       }
     });
   } catch (error) {
-    console.error('Error creating event:', error);
+    console.error('❌ Error creating event:', error);
     return NextResponse.json(
       { error: 'Failed to create event', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
