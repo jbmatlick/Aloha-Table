@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import useSWR from 'swr';
 import dynamic from 'next/dynamic';
 
-// @ts-expect-error: force rebuild
 const LeadsTable = dynamic(() => import('./LeadsTable?t=' + new Date().getTime()), {
   loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading leads...</div>
 }) as any;
