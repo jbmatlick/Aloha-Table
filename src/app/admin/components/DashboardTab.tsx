@@ -17,6 +17,10 @@ const ReferrersTable = dynamic(() => import('./ReferrersTable'), {
   loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading referrers...</div>
 });
 
+const EventsTable = dynamic(() => import('./EventsTable'), {
+  loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading events...</div>
+});
+
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 interface ContactRecord {
@@ -42,9 +46,23 @@ interface ReferrerRecord {
   };
 }
 
+interface EventRecord {
+  id: string;
+  fields: {
+    "Type of Event": string;
+    "Event Date": string;
+    "# of Adults": number;
+    "# of Children": number;
+    "Status": string;
+    "Notes": string;
+    "Lead": string[];
+    "Created At"?: string;
+  };
+}
+
 export default function DashboardTab() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeView, setActiveView] = useState<'leads' | 'referrers'>('leads');
+  const [activeView, setActiveView] = useState<'leads' | 'referrers' | 'events'>('leads');
 
   const { data: recordsData, error: recordsError } = useSWR<{ records: ContactRecord[]; totalPages: number }>(
     `/api/admin/records?page=${currentPage}`,
@@ -58,6 +76,12 @@ export default function DashboardTab() {
     { revalidateOnFocus: false }
   );
 
+  const { data: eventsData, error: eventsError } = useSWR<{ events: EventRecord[] }>(
+    '/api/admin/events',
+    fetcher,
+    { revalidateOnFocus: false }
+  );
+
   return (
     <motion.div 
       initial={{ opacity: 0 }} 
@@ -67,7 +91,9 @@ export default function DashboardTab() {
       <div className="p-6 border-b border-gray-100">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-serif text-gray-900">
-            {activeView === 'leads' ? 'Leads' : 'Referrers'}
+            {activeView === 'leads' && 'Leads'}
+            {activeView === 'referrers' && 'Referrers'}
+            {activeView === 'events' && 'Events'}
           </h2>
           <div className="flex space-x-4">
             <button
@@ -90,6 +116,16 @@ export default function DashboardTab() {
             >
               Referrers
             </button>
+            <button
+              onClick={() => setActiveView('events')}
+              className={`px-4 py-2 rounded-md text-sm font-medium ${
+                activeView === 'events'
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Events
+            </button>
           </div>
         </div>
 
@@ -108,7 +144,7 @@ export default function DashboardTab() {
               onPageChange={setCurrentPage}
             />
           </>
-        ) : (
+        ) : activeView === 'referrers' ? (
           <>
             {referrersError && (
               <div className="mb-4 text-sm text-red-600" role="alert">
@@ -118,6 +154,18 @@ export default function DashboardTab() {
             <ReferrersTable
               referrers={referrersData?.referrers || []}
               isLoading={!referrersData && !referrersError}
+            />
+          </>
+        ) : (
+          <>
+            {eventsError && (
+              <div className="mb-4 text-sm text-red-600" role="alert">
+                {eventsError.message}
+              </div>
+            )}
+            <EventsTable
+              events={eventsData?.events || []}
+              isLoading={!eventsData && !eventsError}
             />
           </>
         )}
