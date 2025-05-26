@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import useSWR from 'swr';
 import dynamic from 'next/dynamic';
 
-const LeadsTable = dynamic(() => import('./LeadsTable_zz999'), {
+const LeadsTable = dynamic(() => import('./LeadsTable'), {
   loading: () => <div className="py-16 text-center text-lg text-gray-400 font-serif">Loading leads...</div>
 }) as any;
 
