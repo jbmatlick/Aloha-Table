@@ -13,8 +13,8 @@ export default function AboutPage() {
         {/* Hero Section */}
         <div className="relative h-[60vh] min-h-[400px] w-full">
           <Image
-            src="/images/chefs-back-to-back.jpg"
-            alt="Angie and Iris Oliveras"
+            src="/images/iris.jpg"
+            alt="Edwayris Oliveras"
             fill
             className="object-cover"
             priority
@@ -27,106 +27,40 @@ export default function AboutPage() {
               transition={{ duration: 0.5 }}
               className="text-4xl md:text-5xl lg:text-6xl font-serif text-center mb-4"
             >
-              Meet the Chefs Behind Salt & Serenity
+              Meet Your Chef
             </motion.h1>
           </div>
         </div>
 
-        {/* Chef Profiles Section */}
-        <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-          {/* Desktop Layout */}
-          <div className="hidden md:block">
-            {/* Back-to-back image */}
-            <div className="relative w-full h-[600px] mb-16 rounded-lg overflow-hidden shadow-md">
+        {/* Chef Profile Section */}
+        <div className="max-w-3xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center">
+            <div className="relative w-64 h-80 rounded-lg overflow-hidden shadow-md mb-8">
               <Image
-                src="/images/chefs-back-to-back.jpg"
-                alt="Angie and Iris Oliveras"
+                src="/images/iris.jpg"
+                alt="Edwayris Oliveras"
                 fill
                 className="object-cover"
               />
             </div>
+            <div className="text-center">
+              <h2 className="text-3xl font-serif text-gray-900 mb-2">Edwayris Oliveras</h2>
+              <p className="text-xl text-island-green font-medium mb-6">Private Chef</p>
+              <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+Hello my name is Edwayris Oliveras, I'm a 21-year-old private chef based on the beautiful island of Kauai. My journey in the kitchen started as a little girl, side-by-side with my great-grandmother, learning how to cook with heart, intuition, and a deep respect for flavor. Today, that same love carries through everything I do—from intimate in-home dinners to thoughtful meal prep services tailored to individual tastes and dietary needs.
 
-            {/* Bios side by side */}
-            <div className="grid grid-cols-2 gap-16">
-              {/* Angie's Bio */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-left"
-              >
-                <h2 className="text-3xl font-serif text-gray-900 mb-2">Angie Oliveras</h2>
-                <p className="text-xl text-island-green font-medium mb-6">The Salt</p>
-                <p className="text-gray-600 leading-relaxed">
-                  I cook the way Kauai feels at sunset — warm, bold, and a little wild. My flavors are loud, honest, and rooted in the local land. After years spent working in busy kitchens from LA to Oahu, I came home to bring fire back to the plate — grilled pineapple, seared ahi, citrus marinades kissed by sea breeze. I love cooking barefoot, where the sound of the surf meets the sizzle of a hot pan. Salt isn't just a seasoning — it's an attitude.
-                </p>
-              </motion.div>
+Though I've been cooking professionally for just over a year, the kitchen has always been my creative space. I specialize in high-quality, traditional meals with a homey feel—food that feels both comforting and elevated. I'm gluten-free myself, so I have a strong awareness around dietary preferences, but I never limit my menus to just one type of eater. Whether you're gluten-free, vegan, or an omnivore, there will always be something satisfying and delicious for you at the table.
 
-              {/* Iris's Bio */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-left"
-              >
-                <h2 className="text-3xl font-serif text-gray-900 mb-2">Iris Oliveras</h2>
-                <p className="text-xl text-island-green font-medium mb-6">The Serenity</p>
-                <p className="text-gray-600 leading-relaxed">
-                  For me, cooking is meditation. It's the rustle of ti leaves, the calm of ocean air moving through open windows, and the soft perfume of poached mango in the afternoon light. I focus on nourishment that's elegant and unfussy — subtle, seasonal, and grounded in aloha. I've studied traditional Hawaiian ingredients and modern plant-forward cuisine to bring peaceful balance to every meal. I'm the yin to Angie's yang — the breeze after the heat.
-                </p>
-              </motion.div>
+What truly sets me apart is my ability to take any set of ingredients and transform them into something flavorful and nourishing. I don't believe in overcomplicating things—simple can be spectacular when the flavors are right. I'm known for creating meals that are approachable yet memorable, familiar yet full of personality.
+
+Living on Kauai gives me the unique opportunity to source the freshest, most vibrant ingredients directly from local farmers markets. I love building menus that reflect the rhythm of the island—seasonal, colorful, and deeply connected to the land. Supporting local growers and incorporating just-picked produce adds another layer of meaning and freshness to everything I create.
+In collaboration with a talented local sommelier, I also offer thoughtfully curated wine and spirit pairings that enhance the flavors of each dish. Whether it's a crisp white to accompany fresh seafood or a bold red that brings depth to a hearty entrée, our pairings are designed to elevate your entire dining experience.
+
+For me, private cheffing is about more than just food—it's about people. I love building real relationships with my clients, curating meals that reflect their preferences and lifestyles. Every menu I create is personal, using fresh ingredients to deliver dishes that satisfy the body and soul.
+
+Whether you're planning a special dinner or need consistent, thoughtful meal prep, I'm here to help you feel nourished, cared for, and happy with what you're eating.
+              </p>
             </div>
-          </div>
-
-          {/* Mobile Layout */}
-          <div className="md:hidden space-y-16">
-            {/* Angie's Profile */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex flex-col items-center"
-            >
-              <div className="relative w-64 h-80 rounded-lg overflow-hidden shadow-md mb-8">
-                <Image
-                  src="/images/angie.jpg"
-                  alt="Angie Oliveras"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="text-center">
-                <h2 className="text-3xl font-serif text-gray-900 mb-2">Angie Oliveras</h2>
-                <p className="text-xl text-island-green font-medium mb-6">The Salt</p>
-                <p className="text-gray-600 leading-relaxed">
-                  I cook the way Kauai feels at sunset — warm, bold, and a little wild. My flavors are loud, honest, and rooted in the local land. After years spent working in busy kitchens from LA to Oahu, I came home to bring fire back to the plate — grilled pineapple, seared ahi, citrus marinades kissed by sea breeze. I love cooking barefoot, where the sound of the surf meets the sizzle of a hot pan. Salt isn't just a seasoning — it's an attitude.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Iris's Profile */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex flex-col items-center"
-            >
-              <div className="relative w-64 h-80 rounded-lg overflow-hidden shadow-md mb-8">
-                <Image
-                  src="/images/iris.jpg"
-                  alt="Iris Oliveras"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="text-center">
-                <h2 className="text-3xl font-serif text-gray-900 mb-2">Iris Oliveras</h2>
-                <p className="text-xl text-island-green font-medium mb-6">The Serenity</p>
-                <p className="text-gray-600 leading-relaxed">
-                  For me, cooking is meditation. It's the rustle of ti leaves, the calm of ocean air moving through open windows, and the soft perfume of poached mango in the afternoon light. I focus on nourishment that's elegant and unfussy — subtle, seasonal, and grounded in aloha. I've studied traditional Hawaiian ingredients and modern plant-forward cuisine to bring peaceful balance to every meal. I'm the yin to Angie's yang — the breeze after the heat.
-                </p>
-              </div>
-            </motion.div>
           </div>
         </div>
 

@@ -201,6 +201,7 @@ const LeadsTable = memo(function LeadsTable({
             setSelectedLeadId(null);
           }}
           leadId={selectedLeadId}
+          leadName={records.find(record => record.id === selectedLeadId)?.fields["Full Name"] || ""}
           onSuccess={() => {
             // The LeadEvents component will automatically refresh due to SWR
           }}
